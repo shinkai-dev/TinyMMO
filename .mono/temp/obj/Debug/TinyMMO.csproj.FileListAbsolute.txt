@@ -1,0 +1,9 @@
+C:\Users\user\Documents\GitHub\TinyMMO\.mono\temp\bin\Debug\TinyMMO.dll
+C:\Users\user\Documents\GitHub\TinyMMO\.mono\temp\bin\Debug\TinyMMO.pdb
+C:\Users\user\Documents\GitHub\TinyMMO\.mono\temp\obj\Debug\TinyMMO.csproj.AssemblyReference.cache
+C:\Users\user\Documents\GitHub\TinyMMO\.mono\temp\obj\Debug\TinyMMO.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\user\Documents\GitHub\TinyMMO\.mono\temp\obj\Debug\TinyMMO.AssemblyInfoInputs.cache
+C:\Users\user\Documents\GitHub\TinyMMO\.mono\temp\obj\Debug\TinyMMO.AssemblyInfo.cs
+C:\Users\user\Documents\GitHub\TinyMMO\.mono\temp\obj\Debug\TinyMMO.csproj.CoreCompileInputs.cache
+C:\Users\user\Documents\GitHub\TinyMMO\.mono\temp\obj\Debug\TinyMMO.dll
+C:\Users\user\Documents\GitHub\TinyMMO\.mono\temp\obj\Debug\TinyMMO.pdb
