@@ -3,7 +3,7 @@ using System;
 
 public class PlayaController : KinematicBody2D
 {
-    [Export] public int speed = 200;
+    [Export] public int speed = 100;
 
 
 
