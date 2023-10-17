@@ -11,8 +11,12 @@ config_version=4
 [application]
 
 config/name="TinyMMO"
-run/main_scene="res://scenes/World.tscn"
+run/main_scene="res://scenes/menuPrin.tscn"
 config/icon="res://icon.png"
+
+[autoload]
+
+Global="*res://scripts/Global.cs"
 
 [display]
 

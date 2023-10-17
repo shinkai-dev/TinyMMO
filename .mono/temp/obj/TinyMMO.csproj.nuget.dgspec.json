@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\user\\Documents\\GitHub\\TinyMMO\\TinyMMO.csproj": {}
+    "B:\\Github\\TinyMMO\\TinyMMO.csproj": {}
   },
   "projects": {
-    "C:\\Users\\user\\Documents\\GitHub\\TinyMMO\\TinyMMO.csproj": {
+    "B:\\Github\\TinyMMO\\TinyMMO.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\user\\Documents\\GitHub\\TinyMMO\\TinyMMO.csproj",
+        "projectUniqueName": "B:\\Github\\TinyMMO\\TinyMMO.csproj",
         "projectName": "TinyMMO",
-        "projectPath": "C:\\Users\\user\\Documents\\GitHub\\TinyMMO\\TinyMMO.csproj",
-        "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\user\\Documents\\GitHub\\TinyMMO\\.mono\\temp\\obj\\",
+        "projectPath": "B:\\Github\\TinyMMO\\TinyMMO.csproj",
+        "packagesPath": "C:\\Users\\pc\\.nuget\\packages\\",
+        "outputPath": "B:\\Github\\TinyMMO\\.mono\\temp\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\pc\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net472"
