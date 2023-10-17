@@ -6,7 +6,7 @@
 [ext_resource path="res://assets/light2d.png" type="Texture" id=4]
 
 [sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 7, 7 )
+extents = Vector2( 8, 8 )
 
 [sub_resource type="ShaderMaterial" id=2]
 render_priority = 3
@@ -68,7 +68,7 @@ texture = ExtResource( 4 )
 energy = 0.8
 
 [node name="stepDelay" type="Timer" parent="."]
-wait_time = 0.2
+one_shot = true
 
 [node name="Tween" type="Tween" parent="."]
 
