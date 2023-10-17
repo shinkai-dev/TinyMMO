@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://scripts/UI/Jogar.cs" type="Script" id=1]
+
+[node name="Menu Principal" type="Node2D"]
+
+[node name="Jogar" type="Button" parent="."]
+margin_left = 465.0
+margin_top = 223.0
+margin_right = 584.0
+margin_bottom = 270.0
+text = "Play"
+script = ExtResource( 1 )
