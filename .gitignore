@@ -13,11 +13,3 @@ export_presets.cfg
 .mono/
 data_*/
 mono_crash.*.json
-.mono/temp/obj/Debug/TinyMMO.assets.cache
-.mono/temp/obj/Debug/TinyMMO.csproj.AssemblyReference.cache
-.mono/temp/obj/Debug/TinyMMO.GeneratedMSBuildEditorConfig.editorconfig
-.mono/temp/obj/project.assets.json
-.mono/temp/obj/project.nuget.cache
-.mono/temp/obj/TinyMMO.csproj.nuget.dgspec.json
-.mono/temp/obj/TinyMMO.csproj.nuget.g.props
-.mono/temp/obj/TinyMMO.csproj.nuget.g.targets
