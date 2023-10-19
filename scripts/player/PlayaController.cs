@@ -5,18 +5,13 @@ using System;
 
 public class PlayaController : KinematicBody2D
 {
-    [Export] public int tileSize = 16;
-
-    [Export] public int MoveSpeed = 1;
-    [Export] public bool isMoving = false;
-    public Timer timer;
-
+    [Export] public int MoveSpeed = 80; 
+    [Export] public float sprintMultiplier = 1.6f;
     public Sprite sprite;
     public Vector2 velocity = new Vector2();
 
     public override void _Ready()
     {
-        timer = GetNode<Timer>("stepDelay");
         sprite = GetNode<Sprite>("Playa");
     }
     
@@ -43,27 +38,17 @@ public class PlayaController : KinematicBody2D
             sprite.FlipH = velocity.x < 0;
             break;
         }
-        velocity = velocity * delta * tileSize;
-        velocity *= MoveSpeed;
-        isMoving = true;
-        timer.WaitTime *= MoveSpeed;
-        timer.Start();
+        velocity = velocity * MoveSpeed;
+        if(Input.IsActionPressed("sprint")){
+            velocity *= sprintMultiplier;
+        }
+        
     }
 
-    public override void _PhysicsProcess(float delta)
-    {
-        if (!isMoving)
-        {
-            GetInput(delta);
-        }
-
-        MoveAndCollide(velocity);
+    public override void _PhysicsProcess(float delta){
+        GetInput(delta);
+        velocity = MoveAndSlide (velocity);
     }
     
-    public void _on_stepDelay_timeout()
-    {
-        isMoving = false;
-        velocity = new Vector2();
-    }
 }
 
