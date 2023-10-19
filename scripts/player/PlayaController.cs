@@ -10,11 +10,14 @@ public class PlayaController : KinematicBody2D
     [Export] public int MoveSpeed = 1;
     [Export] public bool isMoving = false;
     public Timer timer;
+
+    public Sprite sprite;
     public Vector2 velocity = new Vector2();
 
     public override void _Ready()
     {
         timer = GetNode<Timer>("stepDelay");
+        sprite = GetNode<Sprite>("Playa");
     }
     
     public void GetInput(float delta)
@@ -36,6 +39,10 @@ public class PlayaController : KinematicBody2D
         if (velocity == Vector2.Zero)
             return;
 
+        while(velocity.x != 0){
+            sprite.FlipH = velocity.x < 0;
+            break;
+        }
         velocity = velocity * delta * tileSize;
         velocity *= MoveSpeed;
         isMoving = true;
