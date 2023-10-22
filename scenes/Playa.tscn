@@ -35,6 +35,7 @@ zoom = Vector2( 0.2, 0.2 )
 smoothing_speed = 20.0
 
 [node name="ColorRect" type="ColorRect" parent="Camera2D"]
+visible = false
 material = SubResource( 2 )
 anchor_left = 0.5
 anchor_top = 0.5
@@ -69,8 +70,6 @@ energy = 0.8
 [node name="stepDelay" type="Timer" parent="."]
 one_shot = true
 
-[node name="stepSound" type="AudioStreamPlayer2D" parent="."]
-stream = ExtResource( 5 )
-volume_db = -20.0
+[node name="Tween" type="Tween" parent="."]
 
-[connection signal="timeout" from="stepTimer" to="." method="_on_stepDelay_timeout"]
+[connection signal="timeout" from="stepDelay" to="." method="_on_stepDelay_timeout"]
