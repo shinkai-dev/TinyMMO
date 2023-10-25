@@ -62,7 +62,7 @@ shadow_filter = 2
 shadow_filter_smooth = 30.0
 
 [node name="TopLight2D" type="Light2D" parent="."]
-position = Vector2( 1, 2 )
+position = Vector2( -5, 6 )
 scale = Vector2( 1.07813, 0.609375 )
 texture = ExtResource( 2 )
 energy = 0.8
@@ -79,7 +79,7 @@ volume_db = -20.0
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 7 )
-volume_db = -30.0
+volume_db = -20.0
 autoplay = true
 
 [connection signal="mouse_entered" from="." to="." method="_on_Player_mouse_entered"]
