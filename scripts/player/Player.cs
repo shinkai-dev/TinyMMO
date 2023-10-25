@@ -70,7 +70,7 @@ public class Player : KinematicBody2D
 		{
 			Velocity *= sprintMultiplier;
 		}
-		if (stepDelay.TimeLeft == 0)
+		if (stepDelay.TimeLeft == 0 && Velocity != Vector2.Zero)
 		{
 			stepSound.Play();
 			stepSound.PitchScale = (float)GD.RandRange(0.8f, 1.2f);

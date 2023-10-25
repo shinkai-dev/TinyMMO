@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/harvestdawn.mp3-a59c88b3dd97f7ec162c513223a869cc.mp3str"
+
+[deps]
+
+source_file="res://assets/sound/music/harvestdawn.mp3"
+dest_files=[ "res://.import/harvestdawn.mp3-a59c88b3dd97f7ec162c513223a869cc.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0
