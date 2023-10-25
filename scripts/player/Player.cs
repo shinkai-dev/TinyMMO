@@ -5,23 +5,38 @@ using System;
 
 public class Player : KinematicBody2D
 {
-	[Export] public int MoveSpeed = 16;
+	[Export] public int MoveSpeed = 80;
+	[Export] public float sprintMultiplier = 1.6f;
 	public Sprite sprite;
+	public Sprite playaEyes;
 	[Puppet] public Vector2 PuppetVelocity = new Vector2();
 	[Puppet] public Vector2 PuppetPosition = new Vector2();
 	public Vector2 Velocity = new Vector2();
+	public Godot.Color PlayaColor = new Color(0, 0, 0);
+	public Godot.Color PlayaEyeColor = new Color(0, 0, 0);
+	public Label playerName;
 
 	public override void _Ready()
 	{
 		sprite = GetNode<Sprite>("Playa");
+		playaEyes = GetNode<Sprite>("Playa/Playa-eyes");
+		playerName = GetNode<Label>("PlayerName");
 		PuppetPosition = Position;
 		PuppetVelocity = Velocity;
+		//temporario para poder diferenciar os jogadores
+		PlayaColor = new Color(GD.Randf(), GD.Randf(), GD.Randf());
+		PlayaEyeColor = new Color(1 - PlayaColor.r, 1 - PlayaColor.g, 1 - PlayaColor.b);
+		sprite.Modulate = PlayaColor;
+		sprite.SelfModulate = PlayaColor;
+		playaEyes.Modulate = PlayaEyeColor;
+		playaEyes.SelfModulate = PlayaEyeColor;
+		playerName.Text = Name.ToString();
+		playerName.Modulate = PlayaColor;
+
 	}
-	
 	public void GetInput(float delta)
 	{
 		Velocity = new Vector2();
-
 		if (Input.IsActionPressed("ui_right"))
 			Velocity.x += 1;
 
@@ -33,8 +48,10 @@ public class Player : KinematicBody2D
 
 		if (Input.IsActionPressed("ui_up"))
 			Velocity.y -= 1;
-
-		Velocity *= delta * MoveSpeed;
+        if(Input.IsActionPressed("sprint")){
+            Velocity *= sprintMultiplier;
+        }
+		Velocity *= MoveSpeed;
 		Rset(nameof(PuppetVelocity), Velocity);
 		Rset(nameof(PuppetPosition), Position);
 	}
@@ -50,8 +67,9 @@ public class Player : KinematicBody2D
 		}
 
 		sprite.FlipH = Velocity.x < 0;
+		playaEyes.FlipH = Velocity.x < 0;
 
-		MoveAndCollide(Velocity);
+		MoveAndSlide(Velocity);
 	}
 }
 
