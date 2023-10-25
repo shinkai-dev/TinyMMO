@@ -15,6 +15,9 @@ public class Player : KinematicBody2D
 	public Godot.Color PlayaColor = new Color(0, 0, 0);
 	public Godot.Color PlayaEyeColor = new Color(0, 0, 0);
 	public Label playerName;
+	public Timer stepDelay;
+	public float prevStepDelay;
+	public AudioStreamPlayer2D stepSound;
 
 	public override void _Ready()
 	{
@@ -32,6 +35,9 @@ public class Player : KinematicBody2D
 		playaEyes.SelfModulate = PlayaEyeColor;
 		playerName.Text = Name.ToString();
 		playerName.Modulate = PlayaColor;
+		stepSound = GetNode<AudioStreamPlayer2D>("stepSound");
+		stepDelay = GetNode<Timer>("stepDelay");
+		prevStepDelay = stepDelay.WaitTime;
 		Connect("mouse_entered", this, nameof(_on_Player_mouse_entered));
 		Connect("mouse_exited", this, nameof(_on_Player_mouse_exited));
 	}
@@ -63,6 +69,19 @@ public class Player : KinematicBody2D
 		if (Input.IsActionPressed("sprint"))
 		{
 			Velocity *= sprintMultiplier;
+		}
+		if (stepDelay.TimeLeft == 0)
+		{
+			stepSound.Play();
+			stepSound.PitchScale = (float)GD.RandRange(0.8f, 1.2f);
+			if (Input.IsActionPressed("sprint"))
+			{
+				stepDelay.Start(prevStepDelay / sprintMultiplier);
+			}
+			else
+			{
+				stepDelay.Start(prevStepDelay);
+			}
 		}
 		Velocity *= MoveSpeed;
 		Rset(nameof(PuppetVelocity), Velocity);
