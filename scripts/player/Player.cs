@@ -32,8 +32,20 @@ public class Player : KinematicBody2D
 		playaEyes.SelfModulate = PlayaEyeColor;
 		playerName.Text = Name.ToString();
 		playerName.Modulate = PlayaColor;
-
+		Connect("mouse_entered", this, nameof(_on_Player_mouse_entered));
+		Connect("mouse_exited", this, nameof(_on_Player_mouse_exited));
 	}
+	private void _on_Player_mouse_entered()
+		{
+			playerName.Visible = true;
+			GD.Print("Mouse entered");
+		}
+
+	private void _on_Player_mouse_exited()
+		{
+			playerName.Visible = false;
+			GD.Print("Mouse exited");
+		}
 	public void GetInput(float delta)
 	{
 		Velocity = new Vector2();
