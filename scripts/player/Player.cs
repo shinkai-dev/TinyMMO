@@ -14,24 +14,29 @@ public class Player : KinematicBody2D
 	public Vector2 Velocity = new Vector2();
 	public Godot.Color PlayaColor = new Color(0, 0, 0);
 	public Godot.Color PlayaEyeColor = new Color(0, 0, 0);
+	public Label playerName;
 
 	public override void _Ready()
 	{
 		sprite = GetNode<Sprite>("Playa");
 		playaEyes = GetNode<Sprite>("Playa/Playa-eyes");
+		playerName = GetNode<Label>("PlayerName");
 		PuppetPosition = Position;
 		PuppetVelocity = Velocity;
 		//temporario para poder diferenciar os jogadores
+		PlayaColor = new Color(GD.Randf(), GD.Randf(), GD.Randf());
+		PlayaEyeColor = new Color(1 - PlayaColor.r, 1 - PlayaColor.g, 1 - PlayaColor.b);
 		sprite.Modulate = PlayaColor;
 		sprite.SelfModulate = PlayaColor;
 		playaEyes.Modulate = PlayaEyeColor;
 		playaEyes.SelfModulate = PlayaEyeColor;
+		playerName.Text = Name.ToString();
+		playerName.Modulate = PlayaColor;
+
 	}
-	
 	public void GetInput(float delta)
 	{
 		Velocity = new Vector2();
-
 		if (Input.IsActionPressed("ui_right"))
 			Velocity.x += 1;
 
