@@ -36,16 +36,16 @@ public class Player : KinematicBody2D
 		Connect("mouse_exited", this, nameof(_on_Player_mouse_exited));
 	}
 	private void _on_Player_mouse_entered()
-		{
-			playerName.Visible = true;
-			GD.Print("Mouse entered");
-		}
+	{
+		playerName.Visible = true;
+		GD.Print("Mouse entered");
+	}
 
 	private void _on_Player_mouse_exited()
-		{
-			playerName.Visible = false;
-			GD.Print("Mouse exited");
-		}
+	{
+		playerName.Visible = false;
+		GD.Print("Mouse exited");
+	}
 	public void GetInput(float delta)
 	{
 		Velocity = new Vector2();
@@ -60,20 +60,23 @@ public class Player : KinematicBody2D
 
 		if (Input.IsActionPressed("ui_up"))
 			Velocity.y -= 1;
-        if(Input.IsActionPressed("sprint")){
-            Velocity *= sprintMultiplier;
-        }
+		if (Input.IsActionPressed("sprint"))
+		{
+			Velocity *= sprintMultiplier;
+		}
 		Velocity *= MoveSpeed;
 		Rset(nameof(PuppetVelocity), Velocity);
 		Rset(nameof(PuppetPosition), Position);
 	}
-	
+
 	public override void _PhysicsProcess(float delta)
 	{
 		if (IsNetworkMaster())
 		{
 			GetInput(delta);
-		} else {
+		}
+		else
+		{
 			Position = PuppetPosition;
 			Velocity = PuppetVelocity;
 		}
