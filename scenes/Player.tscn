@@ -1,10 +1,11 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://scripts/player/Player.cs" type="Script" id=1]
 [ext_resource path="res://assets/light2d.png" type="Texture" id=2]
 [ext_resource path="res://assets/player/playa.png" type="Texture" id=3]
 [ext_resource path="res://assets/player/playa-eyes.png" type="Texture" id=4]
 [ext_resource path="res://assets/fonts/dogica.ttf" type="DynamicFontData" id=5]
+[ext_resource path="res://assets/sound/step.wav" type="AudioStream" id=6]
 
 [sub_resource type="DynamicFont" id=2]
 size = 6
@@ -66,9 +67,14 @@ texture = ExtResource( 2 )
 energy = 0.8
 
 [node name="stepDelay" type="Timer" parent="."]
+wait_time = 0.5
 one_shot = true
 
 [node name="Tween" type="Tween" parent="."]
+
+[node name="stepSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource( 6 )
+volume_db = -20.0
 
 [connection signal="mouse_entered" from="." to="." method="_on_Player_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_Player_mouse_exited"]
