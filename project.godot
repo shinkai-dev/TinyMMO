@@ -11,13 +11,13 @@ config_version=4
 [application]
 
 config/name="TinyMMO"
-run/main_scene="res://scenes/menuPrin.tscn"
+run/main_scene="res://scenes/menu/menuPrin.tscn"
 boot_splash/image="res://assets/splashscreen.png"
 config/icon="res://icon.png"
 
 [autoload]
 
-Global="*res://scripts/Global.cs"
+AuthController="*res://scripts/controllers/AuthController.cs"
 
 [display]
 
@@ -31,6 +31,8 @@ window=false
 [gui]
 
 common/drop_mouse_on_gui_input_disabled=true
+theme/custom="res://themes/UI.tres"
+theme/custom_font="res://themes/fonts/dogicapixel.tres"
 
 [input]
 

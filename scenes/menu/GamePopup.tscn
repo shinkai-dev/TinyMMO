@@ -1,0 +1,11 @@
+[gd_scene format=2]
+
+[node name="Popup" type="AcceptDialog"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 285.0
+margin_top = 141.0
+margin_right = -279.0
+margin_bottom = -187.0
+window_title = "Alerta!"
+dialog_text = "sdasdsadsad"
