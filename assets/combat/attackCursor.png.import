@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/bat_angry.png-4b6dc7cf4e766cf35887a96f17a3b267.stex"
+path="res://.import/attackCursor.png-2f6802aeacdfdfd05f47e8e5802bf586.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/bat_angry.png"
-dest_files=[ "res://.import/bat_angry.png-4b6dc7cf4e766cf35887a96f17a3b267.stex" ]
+source_file="res://assets/combat/attackCursor.png"
+dest_files=[ "res://.import/attackCursor.png-2f6802aeacdfdfd05f47e8e5802bf586.stex" ]
 
 [params]
 
