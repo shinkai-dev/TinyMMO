@@ -41,6 +41,12 @@ public class Player : KinematicBody2D
 		Connect("mouse_entered", this, nameof(_on_Player_mouse_entered));
 		Connect("mouse_exited", this, nameof(_on_Player_mouse_exited));
 	}
+	
+	[Remote]
+	public void MakeStepSound(){
+		stepSound.Play();
+	}
+
 	private void _on_Player_mouse_entered()
 	{
 		playerName.Visible = true;
@@ -72,7 +78,7 @@ public class Player : KinematicBody2D
 		}
 		if (stepDelay.TimeLeft == 0 && Velocity != Vector2.Zero)
 		{
-			stepSound.Play();
+			Rpc(nameof(MakeStepSound));
 			stepSound.PitchScale = (float)GD.RandRange(0.8f, 1.2f);
 			if (Input.IsActionPressed("sprint"))
 			{
