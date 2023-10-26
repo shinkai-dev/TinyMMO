@@ -14,6 +14,8 @@ public class Combat : Node2D
         rayCast = new RayCast2D();
         rayCast.Enabled = true;
         rayCast.CollisionMask = 2;
+        rayCast.CastTo = new Vector2(AttackRange, 0);
+        rayCast.AddException(Owner);
         AddChild(rayCast);
 
         attackDelay = new Timer();
@@ -34,7 +36,7 @@ public class Combat : Node2D
         if (rayCast.IsColliding())
         {
             var target = rayCast.GetCollider() as Node;
-            GD.Print("ATTACKED" + target.Name);
+            GD.Print("ATTACKED " + target.Name);
             var health = target?.GetNodeOrNull<Health>("Health");
             if (health != null)
             {

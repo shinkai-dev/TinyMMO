@@ -19,8 +19,8 @@ public class Player : KinematicBody2D
 	public float prevStepDelay;
 	public AudioStreamPlayer2D stepSound;
 
-    private Health health;
-    private Combat combat;
+	private Health health;
+	private Combat combat;
 
 	public override void _Ready()
 	{
@@ -41,14 +41,16 @@ public class Player : KinematicBody2D
 		stepSound = GetNode<AudioStreamPlayer2D>("stepSound");
 		stepDelay = GetNode<Timer>("stepDelay");
 		prevStepDelay = stepDelay.WaitTime;
-        health = GetNode<Health>("Health");
-        combat = GetNode<Combat>("Combat");
+		health = GetNode<Health>("Health");
+		combat = GetNode<Combat>("Combat");
+		combat.attackCursor.Modulate = PlayaColor;
 		Connect("mouse_entered", this, nameof(_on_Player_mouse_entered));
 		Connect("mouse_exited", this, nameof(_on_Player_mouse_exited));
 	}
-	
+
 	[Remote]
-	public void MakeStepSound(){
+	public void MakeStepSound()
+	{
 		stepSound.Play();
 	}
 
@@ -67,7 +69,8 @@ public class Player : KinematicBody2D
 	{
 		Velocity = new Vector2();
 
-		if(Input.IsActionJustPressed("ui_select")){
+		if (Input.IsActionJustPressed("ui_select"))
+		{
 			combat.Attack();
 		}
 		if (Input.IsActionPressed("ui_right"))
@@ -121,9 +124,29 @@ public class Player : KinematicBody2D
 		MoveAndSlide(Velocity);
 	}
 
-    public override void _Process(float delta)
+	[Remote]
+	public void rotateAttackCursor(Vector2 mousePosition)
+	{
+		var direction = (mousePosition - GlobalPosition).Normalized();
+		var angle = direction.Angle();
+		combat.attackCursor.Rotation = angle;
+
+		Rpc(nameof(updateAttackCursorRotation), angle);
+	}
+
+    [Remote]
+    public void updateAttackCursorRotation(float angle)
     {
-		combat.attackCursor.Rotation = GetGlobalMousePosition().AngleToPoint(GlobalPosition);
+        combat.attackCursor.Rotation = angle;
     }
+
+	public override void _Process(float delta)
+	{
+		if (IsNetworkMaster())
+		{
+			var mousePosition = GetGlobalMousePosition();
+			RpcId(1, nameof(rotateAttackCursor), mousePosition);
+		}
+	}
 }
 
