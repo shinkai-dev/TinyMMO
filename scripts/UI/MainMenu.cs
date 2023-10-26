@@ -7,14 +7,13 @@ public class MainMenu : Node
 	{
 		GetNode<Button>("Play").Connect("pressed", this, nameof(OnPlayPressed));
 		GetNode<Button>("Host").Connect("pressed", this, nameof(OnHostPressed));
+		GetNode<Button>("Register").Connect("pressed", this, nameof(OnRegisterPressed));
 	}
 
 	void OnPlayPressed() {
-		var peer = new NetworkedMultiplayerENet();
-		peer.CreateClient(NetworkConsts.IP, NetworkConsts.PORT);
-		GetTree().NetworkPeer = peer;
-	
-		OpenGame();
+		var email = GetNode<LineEdit>("Email").Text;
+		var password = GetNode<LineEdit>("Password").Text;
+		GetNode<AuthController>("/root/AuthController").Login(email, password);
 	}
 
 	void OnHostPressed()
@@ -26,6 +25,10 @@ public class MainMenu : Node
 		OpenGame();
 	}
 	
+	void OnRegisterPressed() {
+		GetTree().ChangeScene("res://scenes/menu/Register.tscn");
+	}
+
 	void OpenGame() {
 		GetTree().ChangeScene("res://scenes/GameController.tscn");
 	}

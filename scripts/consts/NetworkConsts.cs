@@ -1,7 +1,4 @@
-using Godot;
-using System;
-
-public abstract class NetworkConsts : Node
+public abstract class NetworkConsts
 {
 	public static readonly string IP = "127.0.0.1";
 	public static readonly int PORT = 1234;
