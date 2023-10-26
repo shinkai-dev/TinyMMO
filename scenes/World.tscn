@@ -1,6 +1,7 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://assets/walltiles.png" type="Texture" id=1]
+[ext_resource path="res://scenes/Enemy.tscn" type="PackedScene" id=2]
 
 [sub_resource type="OccluderPolygon2D" id=2]
 polygon = PoolVector2Array( 16, 16, 0, 16, 0, 0, 16, 0 )
@@ -245,3 +246,7 @@ tile_data = PoolIntArray( -1572855, 3, 0, -1572854, 3, 0, -1572853, 3, 0, -15728
 
 [node name="Spawnpoint" type="Node2D" parent="."]
 position = Vector2( -159, 56 )
+
+[node name="Bat" parent="." instance=ExtResource( 2 )]
+position = Vector2( -39, 28 )
+z_index = 1

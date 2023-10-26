@@ -7,13 +7,16 @@ public class BatAI : KinematicBody2D
 	public float ChaseRange = 200f;
 	[Export]
 	public float Speed = 150f;
-
+    private Health health;
+    private Combat combat;
 	private KinematicBody2D playa;
 
 	public override void _Ready()
 	{
 		var rootNode = GetTree().Root;
 		playa = rootNode.GetNode<KinematicBody2D>("World/Player");
+        health = GetNode<Health>("Health");
+        combat = GetNode<Combat>("Combat");
 	}
 
 	public override void _Process(float delta)

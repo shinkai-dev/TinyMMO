@@ -19,6 +19,9 @@ public class Player : KinematicBody2D
 	public float prevStepDelay;
 	public AudioStreamPlayer2D stepSound;
 
+    private Health health;
+    private Combat combat;
+
 	public override void _Ready()
 	{
 		sprite = GetNode<Sprite>("Playa");
@@ -38,6 +41,8 @@ public class Player : KinematicBody2D
 		stepSound = GetNode<AudioStreamPlayer2D>("stepSound");
 		stepDelay = GetNode<Timer>("stepDelay");
 		prevStepDelay = stepDelay.WaitTime;
+        health = GetNode<Health>("Health");
+        combat = GetNode<Combat>("Combat");
 		Connect("mouse_entered", this, nameof(_on_Player_mouse_entered));
 		Connect("mouse_exited", this, nameof(_on_Player_mouse_exited));
 	}
@@ -61,6 +66,10 @@ public class Player : KinematicBody2D
 	public void GetInput(float delta)
 	{
 		Velocity = new Vector2();
+
+		if(Input.IsActionJustPressed("ui_select")){
+			combat.Attack();
+		}
 		if (Input.IsActionPressed("ui_right"))
 			Velocity.x += 1;
 
@@ -111,5 +120,10 @@ public class Player : KinematicBody2D
 
 		MoveAndSlide(Velocity);
 	}
+
+    public override void _Process(float delta)
+    {
+		combat.attackCursor.Rotation = GetGlobalMousePosition().AngleToPoint(GlobalPosition);
+    }
 }
 
