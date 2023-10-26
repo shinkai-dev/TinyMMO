@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://scripts/UI/RegisterMenu.cs" type="Script" id=1]
+[ext_resource path="res://assets/tinyMMOBackground.jpg" type="Texture" id=2]
 
 [node name="Register" type="Control"]
 anchor_right = 1.0
@@ -38,3 +39,10 @@ margin_top = 52.0
 margin_right = 200.0
 margin_bottom = 70.0
 text = "Register"
+
+[node name="TinyMmoBackground" type="Sprite" parent="."]
+modulate = Color( 0.792157, 0.792157, 0.792157, 1 )
+position = Vector2( 511, 302 )
+scale = Vector2( 0.5, 0.46 )
+z_index = -1
+texture = ExtResource( 2 )
