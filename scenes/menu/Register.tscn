@@ -1,23 +1,76 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://scripts/UI/RegisterMenu.cs" type="Script" id=1]
-[ext_resource path="res://assets/tinyMMOBackground.jpg" type="Texture" id=2]
+[ext_resource path="res://assets/fonts/Pixelcastle-Regular.otf" type="DynamicFontData" id=2]
+[ext_resource path="res://assets/tinyMMOBackground2.jpg" type="Texture" id=3]
+[ext_resource path="res://themes/fonts/dogicapixel.tres" type="DynamicFont" id=4]
+[ext_resource path="res://themes/UI.tres" type="Theme" id=5]
+[ext_resource path="res://scripts/misc/randomQuoteGen.cs" type="Script" id=6]
+[ext_resource path="res://assets/sound/music/AloneInTown.mp3" type="AudioStream" id=7]
+
+[sub_resource type="DynamicFont" id=1]
+size = 128
+outline_size = 2
+outline_color = Color( 1, 0.560784, 0, 0.509804 )
+extra_spacing_char = 8
+font_data = ExtResource( 2 )
+
+[sub_resource type="Gradient" id=2]
 
 [node name="Register" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 rect_pivot_offset = Vector2( 288, 280 )
 
+[node name="TinyMmoBackground2" type="Sprite" parent="."]
+position = Vector2( 513, 299 )
+scale = Vector2( 1.95215, 1.79179 )
+z_index = -1
+texture = ExtResource( 3 )
+
+[node name="Label" type="Label" parent="."]
+margin_left = 182.0
+margin_top = 39.0
+margin_right = 870.0
+margin_bottom = 168.0
+custom_fonts/font = SubResource( 1 )
+text = "TinyMMO"
+align = 1
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="Label"]
+show_behind_parent = true
+position = Vector2( 338, 66 )
+amount = 100
+lifetime = 2.0
+emission_shape = 2
+emission_rect_extents = Vector2( 350, 1 )
+direction = Vector2( 0, 1 )
+gravity = Vector2( 0, -45 )
+angle = 39.6
+angle_random = 1.0
+scale_amount = 3.5
+scale_amount_random = 1.0
+color = Color( 0.87451, 0.466667, 0.0313726, 1 )
+color_ramp = SubResource( 2 )
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 7 )
+volume_db = -20.0
+autoplay = true
+
 [node name="CenterContainer" type="CenterContainer" parent="."]
-margin_right = 1022.0
-margin_bottom = 600.0
+margin_left = 11.0
+margin_top = -11.0
+margin_right = 304.0
+margin_bottom = 589.0
 rect_scale = Vector2( 1.00226, 1 )
+rect_pivot_offset = Vector2( 232.475, 335 )
 
 [node name="GridContainer" type="GridContainer" parent="CenterContainer"]
-margin_left = 411.0
-margin_top = 265.0
-margin_right = 611.0
-margin_bottom = 335.0
+margin_left = 46.0
+margin_top = 256.0
+margin_right = 246.0
+margin_bottom = 344.0
 rect_min_size = Vector2( 200, 0 )
 script = ExtResource( 1 )
 
@@ -25,24 +78,43 @@ script = ExtResource( 1 )
 margin_right = 200.0
 margin_bottom = 22.0
 rect_min_size = Vector2( 200, 0 )
+theme = ExtResource( 5 )
 placeholder_text = "Email"
 
 [node name="Password" type="LineEdit" parent="CenterContainer/GridContainer"]
 margin_top = 26.0
 margin_right = 200.0
 margin_bottom = 48.0
+theme = ExtResource( 5 )
 secret = true
 placeholder_text = "Password"
 
 [node name="Register" type="Button" parent="CenterContainer/GridContainer"]
 margin_top = 52.0
 margin_right = 200.0
-margin_bottom = 70.0
+margin_bottom = 68.0
+theme = ExtResource( 5 )
 text = "Register"
 
-[node name="TinyMmoBackground" type="Sprite" parent="."]
-modulate = Color( 0.792157, 0.792157, 0.792157, 1 )
-position = Vector2( 511, 302 )
-scale = Vector2( 0.5, 0.46 )
-z_index = -1
-texture = ExtResource( 2 )
+[node name="Return" type="Button" parent="CenterContainer/GridContainer"]
+margin_top = 72.0
+margin_right = 200.0
+margin_bottom = 88.0
+theme = ExtResource( 5 )
+text = "Return"
+
+[node name="Label2" type="Label" parent="."]
+margin_left = 9.0
+margin_top = 542.0
+margin_right = 952.0
+margin_bottom = 594.0
+rect_scale = Vector2( 1.00079, 1.01166 )
+rect_pivot_offset = Vector2( -408, -255 )
+custom_colors/font_color = Color( 1, 0.901961, 0.0980392, 1 )
+custom_fonts/font = ExtResource( 4 )
+text = "The Sage Wizard says:
+\"Beware, noble travelers, for in this digital realm
+thy password is thy sacred key to the dungeon's secrets.\""
+autowrap = true
+uppercase = true
+script = ExtResource( 6 )
