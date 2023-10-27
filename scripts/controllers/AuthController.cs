@@ -18,6 +18,10 @@ public partial class AuthController : Node
 		AddChild(LoginRequest);
 	}
 
+	public string GetToken() {
+		return Token + "";
+	}
+
 	public void Register(string email, string password)
 	{
 		var body = JSON.Print(
@@ -61,7 +65,7 @@ public partial class AuthController : Node
 		var gamePopup = (AcceptDialog)gamePopupScene.Instance();
 		if (responseCode == 200)
 		{
-			Token = response["idToken"].ToString();
+			Token = response["refreshToken"].ToString();
 			gamePopup.WindowTitle = "Register";
 			gamePopup.DialogText = "You have been registered successfully!";
 			gamePopup.Connect("confirmed", this, nameof(GoToGame));
@@ -82,7 +86,7 @@ public partial class AuthController : Node
 		var response = JSON.Parse(Encoding.UTF8.GetString(body)).Result as Dictionary;
 		if (responseCode == 200)
 		{
-			Token = response["idToken"].ToString();
+			Token = response["refreshToken"].ToString();
 			GoToGame();
 		}
 		else

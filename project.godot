@@ -81,6 +81,11 @@ roll={
  ]
 }
 
+[locale]
+
+translation_remaps={
+}
+
 [mono]
 
 project/assembly_name="TinyMMO"
