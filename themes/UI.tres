@@ -1,6 +1,9 @@
-[gd_resource type="Theme" load_steps=2 format=2]
+[gd_resource type="Theme" load_steps=5 format=2]
 
 [ext_resource path="res://themes/fonts/dogicapixel.tres" type="DynamicFont" id=1]
+[ext_resource path="res://themes/styles/pressedt.tres" type="StyleBox" id=2]
+[ext_resource path="res://themes/styles/new_styleboxflat.tres" type="StyleBox" id=3]
+[ext_resource path="res://themes/styles/textbox.tres" type="StyleBox" id=4]
 
 [resource]
 Button/colors/font_color = Color( 0.88, 0.88, 0.88, 1 )
@@ -10,11 +13,15 @@ Button/colors/font_color_hover = Color( 0.94, 0.94, 0.94, 1 )
 Button/colors/font_color_pressed = Color( 1, 1, 1, 1 )
 Button/constants/hseparation = 2
 Button/fonts/font = ExtResource( 1 )
-Button/styles/disabled = null
+Button/styles/disabled = ExtResource( 3 )
 Button/styles/focus = null
-Button/styles/hover = null
-Button/styles/normal = null
-Button/styles/pressed = null
+Button/styles/hover = ExtResource( 3 )
+Button/styles/normal = ExtResource( 2 )
+Button/styles/pressed = ExtResource( 3 )
 Label/fonts/font = ExtResource( 1 )
 LineEdit/fonts/font = ExtResource( 1 )
+LineEdit/styles/focus = null
+LineEdit/styles/normal = ExtResource( 4 )
+LineEdit/styles/read_only = null
 TextEdit/fonts/font = ExtResource( 1 )
+TextEdit/styles/normal = null
