@@ -248,5 +248,5 @@ tile_data = PoolIntArray( -1572855, 3, 0, -1572854, 3, 0, -1572853, 3, 0, -15728
 position = Vector2( -159, 56 )
 
 [node name="Bat" parent="." instance=ExtResource( 2 )]
-position = Vector2( -39, 28 )
+position = Vector2( -53, 42 )
 z_index = 1

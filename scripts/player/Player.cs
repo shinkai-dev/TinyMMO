@@ -147,6 +147,8 @@ public class Player : KinematicBody2D
 			var mousePosition = GetGlobalMousePosition();
 			RpcId(1, nameof(rotateAttackCursor), mousePosition);
 		}
+		combat.rayCast.CastTo = (GetGlobalMousePosition() - GlobalPosition).Normalized() * combat.AttackRange;
 	}
+	
 }
 
