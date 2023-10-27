@@ -1,6 +1,8 @@
 # TinyMMO
 A indie MMO game made in Godot 3.5 .NET
 
+![MOSHED-2023-10-26-10-10-30](https://github.com/shinkai-dev/TinyMMO/assets/119751708/27c4fa24-e57c-408e-8d31-9d2b87a90991)
+
 # Instructions
 
 <p>Load the project.</p>
