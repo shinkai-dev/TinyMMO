@@ -21,6 +21,7 @@ AuthController="*res://scripts/controllers/AuthController.cs"
 
 [display]
 
+mouse_cursor/custom_image="res://assets/cursor.png"
 window/stretch/mode="2d"
 window/stretch/aspect="keep"
 
