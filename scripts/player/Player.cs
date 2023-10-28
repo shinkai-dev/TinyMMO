@@ -18,6 +18,8 @@ public class Player : KinematicBody2D
 	public Timer stepDelay;
 	public float prevStepDelay;
 	public AudioStreamPlayer2D stepSound;
+	public string uid;
+	public string Nickname;
 
 	public override void _Ready()
 	{
@@ -26,14 +28,12 @@ public class Player : KinematicBody2D
 		playerName = GetNode<Label>("PlayerName");
 		PuppetPosition = Position;
 		PuppetVelocity = Velocity;
-		//temporario para poder diferenciar os jogadores
-		PlayaColor = new Color(GD.Randf(), GD.Randf(), GD.Randf());
 		PlayaEyeColor = new Color(1 - PlayaColor.r, 1 - PlayaColor.g, 1 - PlayaColor.b);
 		sprite.Modulate = PlayaColor;
 		sprite.SelfModulate = PlayaColor;
 		playaEyes.Modulate = PlayaEyeColor;
 		playaEyes.SelfModulate = PlayaEyeColor;
-		playerName.Text = Name.ToString();
+		playerName.Text = Nickname;
 		playerName.Modulate = PlayaColor;
 		stepSound = GetNode<AudioStreamPlayer2D>("stepSound");
 		stepDelay = GetNode<Timer>("stepDelay");
