@@ -1,9 +1,10 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://scripts/enemies/BatAI.cs" type="Script" id=1]
 [ext_resource path="res://assets/bat_angry.png" type="Texture" id=2]
 [ext_resource path="res://scripts/Combat.cs" type="Script" id=3]
 [ext_resource path="res://scripts/Health.cs" type="Script" id=4]
+[ext_resource path="res://assets/combat/hit.png" type="Texture" id=5]
 
 [sub_resource type="AtlasTexture" id=2]
 atlas = ExtResource( 2 )
@@ -61,3 +62,29 @@ one_shot = true
 initial_velocity = 18.35
 initial_velocity_random = 1.0
 angular_velocity_random = 0.06
+
+[node name="HitEmitter" type="CPUParticles2D" parent="."]
+modulate = Color( 0.984314, 0, 0, 1 )
+emitting = false
+amount = 1
+lifetime = 0.05
+one_shot = true
+texture = ExtResource( 5 )
+gravity = Vector2( 0, 0 )
+initial_velocity = 18.35
+initial_velocity_random = 1.0
+angular_velocity_random = 0.06
+angle = 132.1
+angle_random = 1.0
+color = Color( 0.407843, 0, 0, 1 )
+
+[node name="DeathEmitter" type="CPUParticles2D" parent="."]
+emitting = false
+amount = 25
+one_shot = true
+spread = 180.0
+gravity = Vector2( 0, 0 )
+initial_velocity = 60.05
+initial_velocity_random = 1.0
+scale_amount = 3.0
+scale_amount_random = 1.0

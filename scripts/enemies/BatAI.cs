@@ -17,7 +17,15 @@ public class BatAI : KinematicBody2D
 		playa = rootNode.GetNode<KinematicBody2D>("World/Player");
         health = GetNode<Health>("Health");
         combat = GetNode<Combat>("Combat");
+		GetNode<Health>("Health").Connect("Dead", this, nameof(OnNPCDead));
 	}
+
+
+	public void OnNPCDead()
+    {
+		GD.Print(Name + " dead");
+		QueueFree();
+    }
 
 	public override void _Process(float delta)
 	{

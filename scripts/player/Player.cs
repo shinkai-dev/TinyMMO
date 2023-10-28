@@ -44,8 +44,9 @@ public class Player : KinematicBody2D
 		health = GetNode<Health>("Health");
 		combat = GetNode<Combat>("Combat");
 		combat.attackCursor.Modulate = PlayaColor;
-		Connect("mouse_entered", this, nameof(_on_Player_mouse_entered));
-		Connect("mouse_exited", this, nameof(_on_Player_mouse_exited));
+		Connect("mouse_entered", this, nameof(_on_Area2D_mouse_entered));
+		Connect("mouse_entered", this, nameof(_on_Area2D_mouse_entered));
+		GetNode<Health>("Health").Connect("Dead", this, nameof(OnPlayerDead));
 	}
 
 	[Remote]
@@ -54,13 +55,20 @@ public class Player : KinematicBody2D
 		stepSound.Play();
 	}
 
-	private void _on_Player_mouse_entered()
+	public void OnPlayerDead()
+    {
+		GD.Print(Name + " dead");
+		QueueFree();
+		GetTree().ChangeScene("res://scenes/MainMenu.tscn");
+    }
+
+	private void _on_Area2D_mouse_entered()
 	{
 		playerName.Visible = true;
 		GD.Print("Mouse entered");
 	}
 
-	private void _on_Player_mouse_exited()
+	private void _on_Area2D_mouse_exited()
 	{
 		playerName.Visible = false;
 		GD.Print("Mouse exited");
