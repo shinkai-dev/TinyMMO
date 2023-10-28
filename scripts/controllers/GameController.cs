@@ -6,7 +6,8 @@ using System.Text;
 
 public class GameController : Node
 {
-	private readonly Dictionary<int, Player> players = new Dictionary<int, Player>();
+	private readonly Dictionary<int, Player> PlayersPerSession = new Dictionary<int, Player>();
+	private readonly Dictionary<string, Player> PlayersPerUid = new Dictionary<string, Player>();
 	private readonly HttpClient client = new HttpClient();
 
 	public override void _Ready()
@@ -19,27 +20,38 @@ public class GameController : Node
 		GD.Print(GetTree().GetNetworkUniqueId());
 	}
 
+	[Master]
+	void RegisterPlayer(int sessionId, string playerUid, string nickname, Color color) {
+		AddPlayer(sessionId, playerUid, nickname, color);
+	}
+
 	void PlayerConnected(int id)
 	{
 		GD.Print("Player connected: " + id);
-		if (id > 1)
-			AddPlayer(id);
+		// if (id > 1)
+		// 	AddPlayer(id);
 	}
 
 	void PlayerDisconnected(int id)
 	{
 		GD.Print("Player disconnected: " + id);
-		players[id].QueueFree();
-		players.Remove(id);
+		if (!PlayersPerSession.ContainsKey(id))
+		{
+			return;
+		}
+		PlayersPerSession[id].QueueFree();
+		PlayersPerSession.Remove(id);
+		PlayersPerUid.Remove(PlayersPerSession[id].uid);
 	}
 
 	void ConnectedToServer()
 	{
 		GD.Print("Connected to server");
-		AddPlayer(GetTree().GetNetworkUniqueId());
-		if (GetTree().GetNetworkUniqueId() != 1)
+		var id = GetTree().GetNetworkUniqueId();
+		SetNetworkMaster(id);
+		if (id != 1)
 		{
-			RpcId(1, nameof(CreateUser), GetNode<AuthController>("/root/AuthController").GetToken(), "carlos");
+			RpcId(1, nameof(GetUserByToken), id, GetNode<AuthController>("/root/AuthController").GetToken());
 		}
 	}
 
@@ -49,7 +61,7 @@ public class GameController : Node
 		GetTree().ChangeScene("res://scenes/MainMenu.tscn");
 	}
 
-	void AddPlayer(int id)
+	void AddPlayer(int id, string playerUid, string name, Color color)
 	{
 		GD.Print("Add player: " + id);
 		var newPlayer = (PackedScene)ResourceLoader.Load("res://scenes/Player.tscn");
@@ -58,7 +70,11 @@ public class GameController : Node
 		playerInstance.Name = id + "";
 		playerInstance.SetNetworkMaster(id);
 		playerInstance.GlobalPosition = spawnPoint;
-		players[id] = playerInstance;
+		playerInstance.uid = playerUid;
+		playerInstance.Nickname = name;
+		playerInstance.PlayaColor = color;
+		PlayersPerSession[id] = playerInstance;
+		PlayersPerUid[playerUid] = playerInstance;
 		AddChild(playerInstance);
 	}
 
@@ -88,6 +104,84 @@ public class GameController : Node
 			"Content-Length: " + body.Length
 		};
 		tokenCheckRequest.Request(EndpointConsts.TOKEN_CHECK, headers, true, HTTPClient.Method.Post, body);
+	}
+
+		public void GetTokenForUser(int result, int responseCode, string[] headers, byte[] body, int sessionId)
+	{
+		if (GetTree().GetNetworkUniqueId() != 1)
+		{
+			return;
+		}
+
+		var response = JSON.Parse(Encoding.UTF8.GetString(body)).Result as Godot.Collections.Dictionary;
+		GD.Print(response);
+		var uid = response["user_id"] as string;
+		if (PlayersPerUid.ContainsKey(uid))
+		{
+			var player = PlayersPerUid[uid];
+			RpcId(sessionId, nameof(RegisterPlayer), player.GetNetworkMaster(), uid, player.Name, player.PlayaColor);
+		}
+		else
+		{
+			var userCol = new UserCollection();
+			var playerModel = userCol.GetDoc(uid);
+			if (playerModel != null)
+			{
+				var player = (PackedScene)ResourceLoader.Load("res://scenes/Player.tscn");
+				var playerInstance = (Player)player.Instance();
+				playerInstance.Name = sessionId + "";
+				playerInstance.SetNetworkMaster(sessionId);
+				playerInstance.GlobalPosition = GetNode<Node2D>("World/Spawnpoint").GlobalPosition;
+				playerInstance.uid = uid;
+				playerInstance.Nickname = playerModel.Name;
+				PlayersPerSession[sessionId] = playerInstance;
+				PlayersPerUid[uid] = playerInstance;
+				playerInstance.PlayaColor = new Color(playerModel.Color.r, playerModel.Color.g, playerModel.Color.b);
+				AddChild(playerInstance);
+				RpcId(sessionId, nameof(RegisterPlayer), playerInstance.GetNetworkMaster(), uid, playerInstance.Nickname, playerInstance.PlayaColor);
+			}
+			else
+			{
+				RpcId(sessionId, nameof(SendToCharacterCreate));
+			}
+		}
+	}
+
+	[Master]
+	void SendToCharacterCreate() {
+		GetTree().ChangeScene("res://scenes/menu/CreateCharacter.tscn");
+	}
+
+	[Master]
+	public void GetUserByToken(int id, string token)
+	{
+		if (GetTree().GetNetworkUniqueId() != 1)
+		{
+			return;
+		}
+
+		var tokenCheckRequest = new HTTPRequest();
+		tokenCheckRequest.Connect("request_completed", this, nameof(GetTokenForUser), new Godot.Collections.Array() { id });
+		AddChild(tokenCheckRequest);
+		var body = JSON.Print(
+			new Godot.Collections.Dictionary()
+			{
+				{ "grant_type", "refresh_token" },
+				{ "refresh_token", token },
+			}
+		);
+		var headers = new string[]
+		{
+			"Content-Type: application/json",
+			"Content-Length: " + body.Length
+		};
+		tokenCheckRequest.Request(EndpointConsts.TOKEN_CHECK, headers, true, HTTPClient.Method.Post, body);
+	}
+
+	public void GetUserForId(int id, Godot.Collections.Dictionary user)
+	{
+		GD.Print(user);
+		RpcId(id, nameof(CreateUser), user["id"], user["name"]);
 	}
 
 	public void CreateUserOnTokenChecked(int result, int responseCode, string[] headers, byte[] body, string name)

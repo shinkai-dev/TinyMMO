@@ -18,7 +18,8 @@ public partial class AuthController : Node
 		AddChild(LoginRequest);
 	}
 
-	public string GetToken() {
+	public string GetToken()
+	{
 		return Token + "";
 	}
 
@@ -106,6 +107,71 @@ public partial class AuthController : Node
 		var peer = new NetworkedMultiplayerENet();
 		peer.CreateClient(NetworkConsts.IP, NetworkConsts.PORT);
 		GetTree().NetworkPeer = peer;
+		GetTree().ChangeScene("res://scenes/GameController.tscn");
+	}
+
+	public void CreateCharacter(string name)
+	{
+		RpcId(1, nameof(AddCharacterToDb), GetTree().GetNetworkUniqueId(), Token, name);
+	}
+
+	[Master]
+	void AddCharacterToDb(int networkId, string token, string name)
+	{
+		if (GetTree().GetNetworkUniqueId() != 1)
+		{
+			return;
+		}
+
+		var tokenCheckRequest = new HTTPRequest();
+		tokenCheckRequest.Connect("request_completed", this, nameof(FinishCharacterCreation), new Godot.Collections.Array() { networkId, name });
+		AddChild(tokenCheckRequest);
+		var body = JSON.Print(
+			new Godot.Collections.Dictionary()
+			{
+				{ "grant_type", "refresh_token" },
+				{ "refresh_token", token },
+			}
+		);
+		var headers = new string[]
+		{
+			"Content-Type: application/json",
+			"Content-Length: " + body.Length
+		};
+		tokenCheckRequest.Request(EndpointConsts.TOKEN_CHECK, headers, true, HTTPClient.Method.Post, body);
+	}
+
+	[Master]
+	void FinishCharacterCreation(int result, int responseCode, string[] headers, byte[] body, int networkId, string name)
+	{
+		if (GetTree().GetNetworkUniqueId() != 1)
+		{
+			return;
+		}
+
+		var response = JSON.Parse(Encoding.UTF8.GetString(body)).Result as Godot.Collections.Dictionary;
+		GD.Print(response);
+		var uid = response["user_id"] as string;
+		var userCollection = new UserCollection();
+		userCollection.SetDoc(
+			new UserModel()
+			{
+				Id = uid,
+				Name = name,
+				Color = new ColorModel()
+				{
+					r = GD.Randf(),
+					g = GD.Randf(),
+					b = GD.Randf()
+				}
+			}
+		);
+		RpcId(networkId, nameof(SendToGame));
+	}
+
+	[Master]
+	void SendToGame()
+	{
 		GetTree().ChangeScene("res://scenes/GameController.tscn");
 	}
 }
