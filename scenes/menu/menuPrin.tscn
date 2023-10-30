@@ -121,3 +121,5 @@ thy password is thy sacred key to the dungeon's secrets.\""
 autowrap = true
 uppercase = true
 script = ExtResource( 5 )
+
+[node name="Discord" type="Node2D" parent="."]
