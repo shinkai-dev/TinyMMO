@@ -3,19 +3,44 @@ using System;
 
 public class RegisterMenu : Node
 {
+	private Button RegisterButton;
+	private Button ReturnButton;
+	private AuthController AuthController;
+	private PopupController PopupController;
+	private LineEdit Email;
+	private LineEdit Password;
+
 	public override void _Ready()
 	{
-		GetNode<Button>("Register").Connect("pressed", this, nameof(OnRegisterPressed));
-		GetNode<Button>("Return").Connect("pressed", this, nameof(onReturnPressed));
+		RegisterButton = GetNode<Button>("Register");
+		ReturnButton = GetNode<Button>("Return");
+		AuthController = GetNode<AuthController>("/root/AuthController");
+		PopupController = GetNode<PopupController>("/root/PopupController");
+		Email = GetNode<LineEdit>("Email");
+		Password = GetNode<LineEdit>("Password");
+		RegisterButton.Connect("pressed", this, nameof(OnRegisterPressed));
+		ReturnButton.Connect("pressed", this, nameof(onReturnPressed));
 	}
 
-	void OnRegisterPressed() {
-		GetNode<AuthController>("/root/AuthController").Register(
-			GetNode<LineEdit>("Email").Text,
-			GetNode<LineEdit>("Password").Text
-		);
+	async void OnRegisterPressed()
+	{
+		ToggleForm(false);
+		PopupController.ShowLoading();
+		await AuthController.Register(Email.Text, Password.Text);
+		PopupController.HideLoading();
+		ToggleForm(true);
 	}
-	void onReturnPressed() {
+
+	void ToggleForm(bool enabled)
+	{
+		Email.Editable = enabled;
+		Password.Editable = enabled;
+		RegisterButton.Disabled = !enabled;
+		ReturnButton.Disabled = !enabled;
+	}
+
+	void onReturnPressed()
+	{
 		GetTree().ChangeScene("res://scenes/menu/menuPrin.tscn");
 	}
 }

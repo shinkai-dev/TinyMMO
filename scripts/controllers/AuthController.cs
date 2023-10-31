@@ -1,57 +1,58 @@
+using System.Threading.Tasks;
 using Godot;
 using Godot.Collections;
 
 public partial class AuthController : Node
 {
 	private string Token;
+	private HttpController HttpController;
+	private PopupController PopupController;
+
+	public override void _Ready()
+	{
+		HttpController = GetNode<HttpController>("/root/HttpController");
+		PopupController = GetNode<PopupController>("/root/PopupController");
+	}
 
 	public string GetToken()
 	{
 		return Token + "";
 	}
 
-	public async void Register(string email, string password)
+	public async Task Register(string email, string password)
 	{
-		var httpController = GetNode<HttpController>("/root/HttpController");
-		var body = 
+		var body =
 			new Godot.Collections.Dictionary()
 			{
 				{ "email", email },
 				{ "password", password },
 				{ "returnSecureToken", true }
 			};
-		var response = await httpController.Post(EndpointConsts.FIREBASE_REGISTER, body);
-		var gamePopupScene = (PackedScene)ResourceLoader.Load("res://scenes/menu/GamePopup.tscn");
-		var gamePopup = (AcceptDialog)gamePopupScene.Instance();
+		var response = await HttpController.Post(EndpointConsts.FIREBASE_REGISTER, body);
 		if (response.StatusCode == 200)
 		{
 			Token = response.Body["refreshToken"].ToString();
-			gamePopup.WindowTitle = "Register";
-			gamePopup.DialogText = "You have been registered successfully!";
-			gamePopup.Connect("confirmed", this, nameof(GoToGame));
-			GetTree().Root.AddChild(gamePopup);
+			await PopupController.ShowMessage("Success", "You have been registered successfully!");
+			GoToGame();
 		}
 		else
 		{
-			gamePopup.WindowTitle = "Error";
 			var rawError = ((Dictionary)response.Body["error"])["message"].ToString();
-			gamePopup.DialogText = ErrorMessageConsts.dictionary.ContainsKey(rawError) ? ErrorMessageConsts.dictionary[rawError] : rawError;
-			GetTree().Root.AddChild(gamePopup);
+			var error = ErrorMessageConsts.dictionary.ContainsKey(rawError) ? ErrorMessageConsts.dictionary[rawError] : rawError;
+			_ = PopupController.ShowMessage("Error", error);
 		}
-		gamePopup.Show();
 	}
 
-	public async void Login(string email, string password)
+	public async Task Login(string email, string password)
 	{
-		var httpController = GetNode<HttpController>("/root/HttpController");
-		var body = 
+		var body =
 			new Godot.Collections.Dictionary()
 			{
 				{ "email", email },
 				{ "password", password },
 				{ "returnSecureToken", true }
 			};
-		var response = await httpController.Post(EndpointConsts.FIREBASE_LOGIN, body);
+		var response = await HttpController.Post(EndpointConsts.FIREBASE_LOGIN, body);
 
 		if (response.StatusCode == 200)
 		{
@@ -60,13 +61,9 @@ public partial class AuthController : Node
 		}
 		else
 		{
-			var gamePopupScene = (PackedScene)ResourceLoader.Load("res://scenes/menu/GamePopup.tscn");
-			var gamePopup = (AcceptDialog)gamePopupScene.Instance();
-			gamePopup.WindowTitle = "Error";
 			var rawError = ((Dictionary)response.Body["error"])["message"].ToString();
-			gamePopup.DialogText = ErrorMessageConsts.dictionary.ContainsKey(rawError) ? ErrorMessageConsts.dictionary[rawError] : rawError;
-			GetTree().Root.AddChild(gamePopup);
-			gamePopup.Show();
+			var error = ErrorMessageConsts.dictionary.ContainsKey(rawError) ? ErrorMessageConsts.dictionary[rawError] : rawError;
+			_ = PopupController.ShowMessage("Error", error);
 		}
 	}
 
@@ -91,7 +88,7 @@ public partial class AuthController : Node
 			return;
 		}
 
-		var body = 
+		var body =
 			new Godot.Collections.Dictionary()
 			{
 				{ "grant_type", "refresh_token" },

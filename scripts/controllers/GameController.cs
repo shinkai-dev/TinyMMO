@@ -5,9 +5,12 @@ public class GameController : Node
 {
 	private Dictionary<int, Player> PlayersPerSession = new Dictionary<int, Player>();
 	private readonly Dictionary<string, Player> PlayersPerUid = new Dictionary<string, Player>();
+	private PopupController	PopupController;
 
 	public override void _Ready()
 	{
+		PopupController = GetNode<PopupController>("/root/PopupController");
+
 		GetTree().Connect("connected_to_server", this, nameof(ConnectedToServer));
 		GetTree().Connect("network_peer_connected", this, nameof(PlayerConnected));
 		GetTree().Connect("network_peer_disconnected", this, nameof(PlayerDisconnected));
@@ -107,13 +110,7 @@ public class GameController : Node
 	[Master]
 	async void AlreadyConnected()
 	{
-		var gamePopupScene = (PackedScene)ResourceLoader.Load("res://scenes/menu/GamePopup.tscn");
-		var gamePopup = (AcceptDialog)gamePopupScene.Instance();
-		gamePopup.WindowTitle = "Error";
-		gamePopup.DialogText = "You are already connected";
-		GetTree().Root.AddChild(gamePopup);
-		gamePopup.Show();
-		await ToSignal(gamePopup, "confirmed");
+		await PopupController.ShowMessage("Error", "You are already connected");
 		GetTree().ChangeScene("res://scenes/MainMenu.tscn");
 	}
 

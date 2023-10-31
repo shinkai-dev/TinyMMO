@@ -3,8 +3,12 @@ using System;
 
 public class CreateCharMenu : Node
 {
+	private PopupController PopupController;
+
 	public override void _Ready()
 	{
+		PopupController = GetNode<PopupController>("/root/PopupController");
+
 		GetNode<Button>("Create").Connect("pressed", this, nameof(OnCreatePressed));
 	}
 
@@ -13,12 +17,7 @@ public class CreateCharMenu : Node
 		var name = GetNode<LineEdit>("Name").Text.Trim();
 		if (name.Length < 3)
 		{
-			var gamePopupScene = (PackedScene)ResourceLoader.Load("res://scenes/menu/GamePopup.tscn");
-			var gamePopup = (AcceptDialog)gamePopupScene.Instance();
-			gamePopup.WindowTitle = "Error";
-			gamePopup.DialogText = "The name should have three characters or more";
-			GetTree().Root.AddChild(gamePopup);
-			gamePopup.Show();
+			_ = PopupController.ShowMessage("Error", "The name should have three characters or more");
 			return;
 		}
 		GetNode<AuthController>("/root/AuthController").CreateCharacter(name);

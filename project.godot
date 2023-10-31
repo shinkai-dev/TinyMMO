@@ -19,6 +19,7 @@ config/icon="res://icon.png"
 
 AuthController="*res://scripts/controllers/AuthController.cs"
 HttpController="*res://scripts/controllers/HttpController.cs"
+PopupController="*res://scripts/UI/PopupController.cs"
 
 [display]
 
