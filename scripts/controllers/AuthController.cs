@@ -7,11 +7,13 @@ public partial class AuthController : Node
 	private string Token;
 	private HttpController HttpController;
 	private PopupController PopupController;
+	private UserCollection UserCollection;
 
 	public override void _Ready()
 	{
 		HttpController = GetNode<HttpController>("/root/HttpController");
 		PopupController = GetNode<PopupController>("/root/PopupController");
+		UserCollection = new UserCollection();
 	}
 
 	public string GetToken()
@@ -80,11 +82,25 @@ public partial class AuthController : Node
 		RpcId(1, nameof(AddCharacterToDb), GetTree().GetNetworkUniqueId(), Token, name);
 	}
 
+	[Puppet]
+	void ShowError(string error)
+	{
+		_ = PopupController.ShowMessage("Error", error);
+		PopupController.HideLoading();
+	}
+
 	[Master]
 	async void AddCharacterToDb(int networkId, string token, string name)
 	{
 		if (GetTree().GetNetworkUniqueId() != 1)
 		{
+			return;
+		}
+
+		var playersWithName = UserCollection.QueryBy("name", name);
+		if (playersWithName.Length > 0)
+		{
+			RpcId(networkId, nameof(ShowError), "Name already taken");
 			return;
 		}
 
@@ -97,8 +113,7 @@ public partial class AuthController : Node
 		var httpController = GetNode<HttpController>("/root/HttpController");
 		var response = await httpController.Post(EndpointConsts.TOKEN_CHECK, body);
 		var uid = response.Body["user_id"] as string;
-		var userCollection = new UserCollection();
-		userCollection.SetDoc(
+		UserCollection.SetDoc(
 			new UserModel()
 			{
 				Id = uid,
@@ -114,9 +129,10 @@ public partial class AuthController : Node
 		RpcId(networkId, nameof(SendToGame));
 	}
 
-	[Master]
+	[Puppet]
 	void SendToGame()
 	{
 		GetTree().ChangeScene("res://scenes/GameController.tscn");
+		PopupController.HideLoading();
 	}
 }

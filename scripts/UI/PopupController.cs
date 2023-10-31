@@ -6,6 +6,7 @@ public class PopupController : Node
 {
     private AcceptDialog GamePopup;
     private Control Loading;
+    [Signal] public delegate bool PopupToggled();
 
     public override void _Ready()
     {
@@ -28,9 +29,15 @@ public class PopupController : Node
 
     public void ShowLoading() {
         Loading.Visible = true;
+        EmitSignal(nameof(PopupToggled), true);
     }
 
     public void HideLoading() {
         Loading.Visible = false;
+        EmitSignal(nameof(PopupToggled), false);
+    }
+    
+    public bool IsLoadingVisible() {
+        return Loading.Visible;
     }
 }

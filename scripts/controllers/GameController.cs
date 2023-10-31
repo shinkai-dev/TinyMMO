@@ -101,7 +101,7 @@ public class GameController : Node
 		);
 	}
 
-	[Master]
+	[Puppet]
 	void SendToCharacterCreate()
 	{
 		GetTree().ChangeScene("res://scenes/menu/CreateCharacter.tscn");

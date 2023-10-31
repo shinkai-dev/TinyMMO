@@ -28,4 +28,10 @@ public abstract class DbController<T> where T : BaseModel
         var filter = Builders<T>.Filter.Eq(r => r.Id, id);
         return Collection.Find(filter).FirstOrDefault();
     }
+
+    public T[] QueryBy(string field, string value)
+    {
+        var filter = Builders<T>.Filter.Eq(field, value);
+        return Collection.Find(filter).ToList().ToArray();
+    }
 }
