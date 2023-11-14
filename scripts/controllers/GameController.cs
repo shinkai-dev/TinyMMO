@@ -5,7 +5,7 @@ public class GameController : Node
 {
 	private Dictionary<int, Player> PlayersPerSession = new Dictionary<int, Player>();
 	private readonly Dictionary<string, Player> PlayersPerUid = new Dictionary<string, Player>();
-	private PopupController	PopupController;
+	private PopupController PopupController;
 
 	public override void _Ready()
 	{
@@ -35,11 +35,12 @@ public class GameController : Node
 		{
 			return;
 		}
-		if (PlayersPerUid.ContainsKey(PlayersPerSession[id].Uid))
+		var player = PlayersPerSession[id];
+		if (player.Uid != null && PlayersPerUid.ContainsKey(player.Uid))
 		{
-			PlayersPerUid.Remove(PlayersPerSession[id].Uid);
+			PlayersPerUid.Remove(player.Uid);
 		}
-		PlayersPerSession[id].QueueFree();
+		player.QueueFree();
 		PlayersPerSession.Remove(id);
 	}
 
@@ -50,7 +51,12 @@ public class GameController : Node
 		if (id != 1)
 		{
 			AddPlayer(id);
-			RpcId(1, nameof(GetUserByToken), id, GetNode<AuthController>("/root/AuthController").GetToken());
+			RpcId(
+				1,
+				nameof(GetUserByToken),
+				id,
+				GetNode<AuthController>("/root/AuthController").GetToken()
+			);
 		}
 	}
 
@@ -82,36 +88,37 @@ public class GameController : Node
 			return;
 		}
 
-		var body =
-			new Godot.Collections.Dictionary()
-			{
-				{ "grant_type", "refresh_token" },
-				{ "refresh_token", authToken },
-			};
+		var body = new Godot.Collections.Dictionary()
+		{
+			{ "grant_type", "refresh_token" },
+			{ "refresh_token", authToken },
+		};
 		var httpController = GetNode<HttpController>("/root/HttpController");
 		var response = await httpController.Post(EndpointConsts.TOKEN_CHECK, body);
 		var uid = response.Body["user_id"];
 		var userCollection = new UserCollection();
-		userCollection.SetDoc(
-			new UserModel()
-			{
-				Id = uid + "",
-				Name = name
-			}
-		);
+		userCollection.SetDoc(new UserModel() { Id = uid + "", Name = name });
 	}
 
 	[Puppet]
-	void SendToCharacterCreate()
+	async void SendToCharacterCreate()
 	{
-		GetTree().ChangeScene("res://scenes/menu/CreateCharacter.tscn");
+		var CharacterCreationMenu = (PackedScene)ResourceLoader.Load("res://scenes/menu/CreateCharacter.tscn");
+		var CharacterCreationMenuInstance = (Popup)CharacterCreationMenu.Instance();
+		GetTree().Root.GetNode("ContainerCanvas").AddChild(CharacterCreationMenuInstance);
+		var menu = CharacterCreationMenuInstance.GetNode("CenterContainer").GetNode("Menu");
+		CharacterCreationMenuInstance.PopupCentered();
+		CharacterCreationMenuInstance.Raise();
+		await ToSignal(menu, nameof(CreateCharMenu.Done));
+		var id = GetTree().GetNetworkUniqueId();
+		RpcId(1, nameof(GetUserByToken), id, GetNode<AuthController>("/root/AuthController").GetToken());
 	}
 
-	[Master]
+	[Puppet]
 	async void AlreadyConnected()
 	{
+		GetTree().ChangeScene("res://scenes/menu/menuPrin.tscn");
 		await PopupController.ShowMessage("Error", "You are already connected");
-		GetTree().ChangeScene("res://scenes/MainMenu.tscn");
 	}
 
 	[Master]
@@ -123,10 +130,10 @@ public class GameController : Node
 		}
 
 		var body = new Godot.Collections.Dictionary()
-			{
-				{ "grant_type", "refresh_token" },
-				{ "refresh_token", token },
-			};
+		{
+			{ "grant_type", "refresh_token" },
+			{ "refresh_token", token },
+		};
 		var httpController = GetNode<HttpController>("/root/HttpController");
 		var response = await httpController.Post(EndpointConsts.TOKEN_CHECK, body);
 		var uid = response.Body["user_id"] as string;
@@ -148,29 +155,28 @@ public class GameController : Node
 				g = playerModel.Color.g,
 				b = playerModel.Color.b
 			};
-			player.SetData(playerModel.Id, playerModel.Name, color);
+			player.SetData(playerModel.Id, playerModel.Name, color, true);
 			PlayersPerUid[uid] = player;
 		}
 		else
 		{
 			RpcId(id, nameof(SendToCharacterCreate));
-			return;
 		}
-		foreach (var player in PlayersPerSession)
+		foreach (var playerChar in PlayersPerSession)
 		{
-			if (player.Key == id)
+			if (playerChar.Key == id)
 			{
 				continue;
 			}
-			var playerVal = player.Value;
+			var playerVal = playerChar.Value;
 			var playerColor = playerVal.PlayaColor;
-			var color = new Color()
+			var playerNativeColor = new Color()
 			{
 				r = playerVal.PlayaColor.r,
 				g = playerVal.PlayaColor.g,
 				b = playerVal.PlayaColor.b
 			};
-			playerVal.UpdateData(id, playerVal.Uid, playerVal.Nickname, color);
+			playerVal.UpdateData(id, playerVal.Uid, playerVal.Nickname, playerNativeColor, true);
 		}
 	}
 }

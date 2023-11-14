@@ -10,25 +10,31 @@ public class PopupController : Node
 
     public override void _Ready()
     {
+        var canvas = (PackedScene)ResourceLoader.Load("res://scenes/menu/ContainerCanvas.tscn");
+        var containerCanvas = (CanvasLayer)canvas.Instance();
+        GetTree().Root.CallDeferred("add_child", containerCanvas);
+
         var gamePopupScene = (PackedScene)ResourceLoader.Load("res://scenes/menu/GamePopup.tscn");
         GamePopup = (AcceptDialog)gamePopupScene.Instance();
-        GetTree().Root.CallDeferred("add_child", GamePopup);
+        containerCanvas.AddChild(GamePopup);
 
         var loadingScene = (PackedScene)ResourceLoader.Load("res://scenes/menu/Loading.tscn");
         Loading = (Control)loadingScene.Instance();
         Loading.Visible = false;
-        GetTree().Root.CallDeferred("add_child", Loading);
+        containerCanvas.AddChild(Loading);
     }
 
     public async Task ShowMessage(string title, string description) {
         GamePopup.WindowTitle = title;
         GamePopup.DialogText = description;
-        GamePopup.Show();
+        GamePopup.PopupCentered();
+        GamePopup.Raise();
         await ToSignal(GamePopup, "confirmed");
     }
 
     public void ShowLoading() {
         Loading.Visible = true;
+        Loading.Raise();
         EmitSignal(nameof(PopupToggled), true);
     }
 

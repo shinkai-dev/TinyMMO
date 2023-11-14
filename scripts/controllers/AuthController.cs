@@ -126,13 +126,12 @@ public partial class AuthController : Node
 				}
 			}
 		);
-		RpcId(networkId, nameof(SendToGame));
+		RpcId(networkId, nameof(ToggleLoading));
 	}
 
 	[Puppet]
-	void SendToGame()
+	void ToggleLoading()
 	{
-		GetTree().ChangeScene("res://scenes/GameController.tscn");
 		PopupController.HideLoading();
 	}
 }

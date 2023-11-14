@@ -57,6 +57,13 @@ public class Player : KinematicBody2D
 		set { GetNode<Label>("PlayerName").Text = value; Nickname_ = value; GD.Print(value); }
 		get { return Nickname_; }
 	}
+	private bool Active_ = false;
+	[Remote]
+	public bool Active
+	{
+		set { Active_ = value; Visible = value; }
+		get { return Active_; }
+	}
 
 	public override void _Ready()
 	{
@@ -90,6 +97,10 @@ public class Player : KinematicBody2D
 	}
 	public void GetInput(float delta)
 	{
+		if (!Active) {
+			return;
+		}
+
 		Velocity = new Vector2();
 		if (Input.IsActionPressed("ui_right"))
 			Velocity.x += 1;
@@ -126,6 +137,10 @@ public class Player : KinematicBody2D
 
 	public override void _PhysicsProcess(float delta)
 	{
+		if (!Active) {
+			return;
+		}
+
 		if (IsNetworkMaster())
 		{
 			GetInput(delta);
@@ -144,7 +159,7 @@ public class Player : KinematicBody2D
 		MoveAndSlide(Velocity);
 	}
 
-	public void SetData(string uid, string name, Color color)
+	public void SetData(string uid, string name, Color color, bool active)
 	{
 		if (GetTree().GetNetworkUniqueId() != 1)
 		{
@@ -154,12 +169,14 @@ public class Player : KinematicBody2D
 		Rset(nameof(Uid_), uid);
 		Rset(nameof(Nickname), name);
 		Rset(nameof(PlayaColor), new Color(color.r, color.g, color.b));
+		Rset(nameof(Active), active);
 		Uid_ = uid;
 		Nickname = name;
 		PlayaColor = new Color(color.r, color.g, color.b);
+		Active = active;
 	}
 
-	public void UpdateData(int sessionId, string uid, string name, Color color)
+	public void UpdateData(int sessionId, string uid, string name, Color color, bool active)
 	{
 		if (GetTree().GetNetworkUniqueId() != 1)
 		{
@@ -169,6 +186,7 @@ public class Player : KinematicBody2D
 		RsetId(sessionId, nameof(Uid_), uid);
 		RsetId(sessionId, nameof(Nickname), name);
 		RsetId(sessionId, nameof(PlayaColor), new Color(color.r, color.g, color.b));
+		RsetId(sessionId, nameof(Active), active);
 	}
 }
 
