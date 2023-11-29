@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/tinyMMOBackground2.jpg-94fa8ca0323431489910a4abf2d5913e.stex"
+path="res://.import/tinyMMOBackground.jpg-b93f84ebfb2a826bae71a1c8ad0537ae.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tinyMMOBackground2.jpg"
-dest_files=[ "res://.import/tinyMMOBackground2.jpg-94fa8ca0323431489910a4abf2d5913e.stex" ]
+source_file="res://assets/backgrounds/tinyMMOBackground.jpg"
+dest_files=[ "res://.import/tinyMMOBackground.jpg-b93f84ebfb2a826bae71a1c8ad0537ae.stex" ]
 
 [params]
 

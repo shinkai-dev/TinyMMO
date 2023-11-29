@@ -5,61 +5,102 @@ using System;
 
 public class Player : KinematicBody2D
 {
-	[Export] public int MoveSpeed = 80;
-	[Export] public float sprintMultiplier = 1.6f;
-	public Sprite sprite;
-	public Sprite playaEyes;
-	[Puppet] public Vector2 PuppetVelocity = new Vector2();
-	[Puppet] public Vector2 PuppetPosition = new Vector2();
+	[Export] private int MoveSpeed = 80;
+	[Export] private float sprintMultiplier = 1.6f;
+	[Puppet] private Vector2 PuppetVelocity = new Vector2();
+	[Puppet] private Vector2 PuppetPosition = new Vector2();
 	public Vector2 Velocity = new Vector2();
-	public Godot.Color PlayaColor = new Color(0, 0, 0);
-	public Godot.Color PlayaEyeColor = new Color(0, 0, 0);
-	public Label playerName;
+	private Color PlayaColor_ = new Color(1, 1, 1);
+	[Remote]
+	public Godot.Color PlayaColor
+	{
+		set
+		{
+			GD.Print(value);
+			PlayaEyeColor = new Color(1 - value.r, 1 - value.g, 1 - value.b);
+			var playaEyes = GetNode<Sprite>("Playa/Playa-eyes");
+			var sprite = GetNode<Sprite>("Playa");
+			var playerName = GetNode<Label>("PlayerName");
+			sprite.Modulate = value;
+			sprite.SelfModulate = value;
+			playaEyes.Modulate = PlayaEyeColor;
+			playaEyes.SelfModulate = PlayaEyeColor;
+			playerName.Modulate = value;
+			PlayaColor_ = value;
+		}
+		get { return PlayaColor_; }
+	}
+	private Godot.Color PlayaEyeColor_ = new Color(1, 1, 1);
+	public Godot.Color PlayaEyeColor
+	{
+		set
+		{
+			PlayaEyeColor_ = value;
+			var playaEyes = GetNode<Sprite>("Playa/Playa-eyes");
+			playaEyes.Modulate = value;
+			playaEyes.SelfModulate = value;
+		}
+		get { return PlayaEyeColor_; }
+	}
 	public Timer stepDelay;
 	public float prevStepDelay;
 	public AudioStreamPlayer2D stepSound;
+	[Remote] private string Uid_;
+	public string Uid
+	{
+		get { return Uid_; }
+	}
+	private string Nickname_ = "";
+	[Remote]
+	public string Nickname
+	{
+		set { GetNode<Label>("PlayerName").Text = value; Nickname_ = value; GD.Print(value); }
+		get { return Nickname_; }
+	}
+	private bool Active_ = false;
+	[Remote]
+	public bool Active
+	{
+		set { Active_ = value; Visible = value; }
+		get { return Active_; }
+	}
 
 	public override void _Ready()
 	{
-		sprite = GetNode<Sprite>("Playa");
-		playaEyes = GetNode<Sprite>("Playa/Playa-eyes");
-		playerName = GetNode<Label>("PlayerName");
 		PuppetPosition = Position;
 		PuppetVelocity = Velocity;
-		//temporario para poder diferenciar os jogadores
-		PlayaColor = new Color(GD.Randf(), GD.Randf(), GD.Randf());
-		PlayaEyeColor = new Color(1 - PlayaColor.r, 1 - PlayaColor.g, 1 - PlayaColor.b);
-		sprite.Modulate = PlayaColor;
-		sprite.SelfModulate = PlayaColor;
-		playaEyes.Modulate = PlayaEyeColor;
-		playaEyes.SelfModulate = PlayaEyeColor;
-		playerName.Text = Name.ToString();
-		playerName.Modulate = PlayaColor;
 		stepSound = GetNode<AudioStreamPlayer2D>("stepSound");
 		stepDelay = GetNode<Timer>("stepDelay");
 		prevStepDelay = stepDelay.WaitTime;
 		Connect("mouse_entered", this, nameof(_on_Player_mouse_entered));
 		Connect("mouse_exited", this, nameof(_on_Player_mouse_exited));
 	}
-	
+
 	[Remote]
-	public void MakeStepSound(){
+	public void MakeStepSound()
+	{
 		stepSound.Play();
 	}
 
 	private void _on_Player_mouse_entered()
 	{
+		var playerName = GetNode<Label>("PlayerName");
 		playerName.Visible = true;
 		GD.Print("Mouse entered");
 	}
 
 	private void _on_Player_mouse_exited()
 	{
+		var playerName = GetNode<Label>("PlayerName");
 		playerName.Visible = false;
 		GD.Print("Mouse exited");
 	}
 	public void GetInput(float delta)
 	{
+		if (!Active) {
+			return;
+		}
+
 		Velocity = new Vector2();
 		if (Input.IsActionPressed("ui_right"))
 			Velocity.x += 1;
@@ -96,6 +137,10 @@ public class Player : KinematicBody2D
 
 	public override void _PhysicsProcess(float delta)
 	{
+		if (!Active) {
+			return;
+		}
+
 		if (IsNetworkMaster())
 		{
 			GetInput(delta);
@@ -106,10 +151,42 @@ public class Player : KinematicBody2D
 			Velocity = PuppetVelocity;
 		}
 
-		sprite.FlipH = Velocity.x < 0;
+		var playa = GetNode<Sprite>("Playa");
+		var playaEyes = GetNode<Sprite>("Playa/Playa-eyes");
+		playa.FlipH = Velocity.x < 0;
 		playaEyes.FlipH = Velocity.x < 0;
 
 		MoveAndSlide(Velocity);
+	}
+
+	public void SetData(string uid, string name, Color color, bool active)
+	{
+		if (GetTree().GetNetworkUniqueId() != 1)
+		{
+			return;
+		}
+
+		Rset(nameof(Uid_), uid);
+		Rset(nameof(Nickname), name);
+		Rset(nameof(PlayaColor), new Color(color.r, color.g, color.b));
+		Rset(nameof(Active), active);
+		Uid_ = uid;
+		Nickname = name;
+		PlayaColor = new Color(color.r, color.g, color.b);
+		Active = active;
+	}
+
+	public void UpdateData(int sessionId, string uid, string name, Color color, bool active)
+	{
+		if (GetTree().GetNetworkUniqueId() != 1)
+		{
+			return;
+		}
+
+		RsetId(sessionId, nameof(Uid_), uid);
+		RsetId(sessionId, nameof(Nickname), name);
+		RsetId(sessionId, nameof(PlayaColor), new Color(color.r, color.g, color.b));
+		RsetId(sessionId, nameof(Active), active);
 	}
 }
 

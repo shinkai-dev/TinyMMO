@@ -1,99 +1,71 @@
+using System.Threading.Tasks;
 using Godot;
 using Godot.Collections;
-using System.Text;
 
 public partial class AuthController : Node
 {
-	private HTTPRequest RegisterRequest;
-	private HTTPRequest LoginRequest;
 	private string Token;
+	private HttpController HttpController;
+	private PopupController PopupController;
+	private UserCollection UserCollection;
 
 	public override void _Ready()
 	{
-		RegisterRequest = new HTTPRequest();
-		RegisterRequest.Connect("request_completed", this, nameof(OnRegisterCompleted));
-		AddChild(RegisterRequest);
-		LoginRequest = new HTTPRequest();
-		LoginRequest.Connect("request_completed", this, nameof(OnLoginCompleted));
-		AddChild(LoginRequest);
+		HttpController = GetNode<HttpController>("/root/HttpController");
+		PopupController = GetNode<PopupController>("/root/PopupController");
+		UserCollection = new UserCollection();
 	}
 
-	public void Register(string email, string password)
+	public string GetToken()
 	{
-		var body = JSON.Print(
-			new Dictionary()
+		return Token + "";
+	}
+
+	public async Task Register(string email, string password)
+	{
+		var body =
+			new Godot.Collections.Dictionary()
 			{
 				{ "email", email },
 				{ "password", password },
 				{ "returnSecureToken", true }
-			}
-		);
-		var headers = new string[]
+			};
+		var response = await HttpController.Post(EndpointConsts.FIREBASE_REGISTER, body);
+		if (response.StatusCode == 200)
 		{
-			"Content-Type: application/json",
-			"Content-Length: " + body.Length
-		};
-		RegisterRequest.Request(EndpointConsts.FIREBASE_REGISTER, headers, true, HTTPClient.Method.Post, body);
-	}
-
-	public void Login(string email, string password)
-	{
-		var body = JSON.Print(
-			new Dictionary()
-			{
-				{ "email", email },
-				{ "password", password },
-				{ "returnSecureToken", true }
-			}
-		);
-		var headers = new string[]
-		{
-			"Content-Type: application/json",
-			"Content-Length: " + body.Length
-		};
-		LoginRequest.Request(EndpointConsts.FIREBASE_LOGIN, headers, true, HTTPClient.Method.Post, body);
-	}
-
-	void OnRegisterCompleted(int result, int responseCode, string[] headers, byte[] body)
-	{
-		var response = JSON.Parse(Encoding.UTF8.GetString(body)).Result as Dictionary;
-		var gamePopupScene = (PackedScene)ResourceLoader.Load("res://scenes/menu/GamePopup.tscn");
-		var gamePopup = (AcceptDialog)gamePopupScene.Instance();
-		if (responseCode == 200)
-		{
-			Token = response["idToken"].ToString();
-			gamePopup.WindowTitle = "Register";
-			gamePopup.DialogText = "You have been registered successfully!";
-			gamePopup.Connect("confirmed", this, nameof(GoToGame));
-			GetTree().Root.AddChild(gamePopup);
-		}
-		else
-		{
-			gamePopup.WindowTitle = "Error";
-			var rawError = ((Dictionary)response["error"])["message"].ToString();
-			gamePopup.DialogText = ErrorMessageConsts.dictionary.ContainsKey(rawError) ? ErrorMessageConsts.dictionary[rawError] : rawError;
-			GetTree().Root.AddChild(gamePopup);
-		}
-		gamePopup.Show();
-	}
-
-	void OnLoginCompleted(int result, int responseCode, string[] headers, byte[] body)
-	{
-		var response = JSON.Parse(Encoding.UTF8.GetString(body)).Result as Dictionary;
-		if (responseCode == 200)
-		{
-			Token = response["idToken"].ToString();
+			Token = response.Body["refreshToken"].ToString();
+			await PopupController.ShowMessage("Success", "You have been registered successfully!");
 			GoToGame();
 		}
 		else
 		{
-			var gamePopupScene = (PackedScene)ResourceLoader.Load("res://scenes/menu/GamePopup.tscn");
-			var gamePopup = (AcceptDialog)gamePopupScene.Instance();
-			gamePopup.WindowTitle = "Error";
-			var rawError = ((Dictionary)response["error"])["message"].ToString();
-			gamePopup.DialogText = ErrorMessageConsts.dictionary.ContainsKey(rawError) ? ErrorMessageConsts.dictionary[rawError] : rawError;
-			GetTree().Root.AddChild(gamePopup);
-			gamePopup.Show();
+			var rawError = ((Dictionary)response.Body["error"])["message"].ToString();
+			var error = ErrorMessageConsts.dictionary.ContainsKey(rawError) ? ErrorMessageConsts.dictionary[rawError] : rawError;
+			_ = PopupController.ShowMessage("Error", error);
+		}
+	}
+
+	public async Task Login(string email, string password)
+	{
+		var body =
+			new Godot.Collections.Dictionary()
+			{
+				{ "email", email },
+				{ "password", password },
+				{ "returnSecureToken", true }
+			};
+		var response = await HttpController.Post(EndpointConsts.FIREBASE_LOGIN, body);
+
+		if (response.StatusCode == 200)
+		{
+			Token = response.Body["refreshToken"].ToString();
+			GoToGame();
+		}
+		else
+		{
+			var rawError = ((Dictionary)response.Body["error"])["message"].ToString();
+			var error = ErrorMessageConsts.dictionary.ContainsKey(rawError) ? ErrorMessageConsts.dictionary[rawError] : rawError;
+			_ = PopupController.ShowMessage("Error", error);
 		}
 	}
 
@@ -103,5 +75,63 @@ public partial class AuthController : Node
 		peer.CreateClient(NetworkConsts.IP, NetworkConsts.PORT);
 		GetTree().NetworkPeer = peer;
 		GetTree().ChangeScene("res://scenes/GameController.tscn");
+	}
+
+	public void CreateCharacter(string name)
+	{
+		RpcId(1, nameof(AddCharacterToDb), GetTree().GetNetworkUniqueId(), Token, name);
+	}
+
+	[Puppet]
+	void ShowError(string error)
+	{
+		_ = PopupController.ShowMessage("Error", error);
+		PopupController.HideLoading();
+	}
+
+	[Master]
+	async void AddCharacterToDb(int networkId, string token, string name)
+	{
+		if (GetTree().GetNetworkUniqueId() != 1)
+		{
+			return;
+		}
+
+		var playersWithName = UserCollection.QueryBy("name", name);
+		if (playersWithName.Length > 0)
+		{
+			RpcId(networkId, nameof(ShowError), "Name already taken");
+			return;
+		}
+
+		var body =
+			new Godot.Collections.Dictionary()
+			{
+				{ "grant_type", "refresh_token" },
+				{ "refresh_token", token },
+			};
+		var httpController = GetNode<HttpController>("/root/HttpController");
+		var response = await httpController.Post(EndpointConsts.TOKEN_CHECK, body);
+		var uid = response.Body["user_id"] as string;
+		UserCollection.SetDoc(
+			new UserModel()
+			{
+				Id = uid,
+				Name = name,
+				Color = new ColorModel()
+				{
+					r = GD.Randf(),
+					g = GD.Randf(),
+					b = GD.Randf()
+				}
+			}
+		);
+		RpcId(networkId, nameof(ToggleLoading));
+	}
+
+	[Puppet]
+	void ToggleLoading()
+	{
+		PopupController.HideLoading();
 	}
 }
