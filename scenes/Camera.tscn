@@ -3,4 +3,4 @@
 [node name="Camera2D" type="Camera2D"]
 z_index = 3
 anchor_mode = 0
-smoothing_speed = 20.0
+position_smoothing_speed = 20.0

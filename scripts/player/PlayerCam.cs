@@ -1,13 +1,13 @@
 using Godot;
 using System;
 
-public class PlayerCam : Camera2D
+public partial class PlayerCam : Camera2D
 {
 	[Export] public float ServerCamSpeed = 32f;
 
 	public override void _Process(float delta)
 	{
-		if (GetTree().GetNetworkUniqueId() == 1) {
+		if (GetTree().GetUniqueId() == 1) {
 			UpdateServerCam(delta);
 		} else {
 			UpdatePlayerCam();
@@ -36,7 +36,7 @@ public class PlayerCam : Camera2D
 
 	void UpdatePlayerCam() {
 		try {
-		 	var PlayerPos = GetNode<Player>("../" + GetTree().GetNetworkUniqueId()).GlobalTransform;
+		 	var PlayerPos = GetNode<Player>("../" + GetTree().GetUniqueId()).GlobalTransform;
 			GlobalPosition = PlayerPos.origin;
 		} catch {
 			// Do nothing

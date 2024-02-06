@@ -10,7 +10,7 @@ public struct HttpResponse
     public Godot.Collections.Dictionary Body;
 }
 
-public class HttpController : Node
+public partial class HttpController : Node
 {
     private readonly string[] defaultHeaders = new string[]
     {

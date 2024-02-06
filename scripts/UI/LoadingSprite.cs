@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public class LoadingSprite : Sprite
+public partial class LoadingSprite : Sprite2D
 {
 
 	public override void _Process(float delta)

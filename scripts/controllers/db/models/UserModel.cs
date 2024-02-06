@@ -1,7 +1,7 @@
 using Godot;
 using MongoDB.Bson.Serialization.Attributes;
 
-public class UserModel : BaseModel
+public partial class UserModel : BaseModel
 {
     [BsonElement("name")]
     public string Name;

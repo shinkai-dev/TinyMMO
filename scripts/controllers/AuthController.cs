@@ -71,28 +71,29 @@ public partial class AuthController : Node
 
 	void GoToGame()
 	{
-		var peer = new NetworkedMultiplayerENet();
+		var peer = new ENetMultiplayerPeer();
 		peer.CreateClient(NetworkConsts.IP, NetworkConsts.PORT);
 		GetTree().NetworkPeer = peer;
-		GetTree().ChangeScene("res://scenes/GameController.tscn");
+		GetTree().ChangeSceneToFile("res://scenes/GameController.tscn");
 	}
 
 	public void CreateCharacter(string name)
 	{
-		RpcId(1, nameof(AddCharacterToDb), GetTree().GetNetworkUniqueId(), Token, name);
+		RpcId(1, nameof(AddCharacterToDb), GetTree().GetUniqueId(), Token, name);
 	}
 
-	[Puppet]
+	[RPC]
 	void ShowError(string error)
 	{
 		_ = PopupController.ShowMessage("Error", error);
 		PopupController.HideLoading();
 	}
 
-	[Master]
+	The master and mastersync rpc behavior is not officially supported anymore. Try using another keyword or making custom logic using Multiplayer.GetRemoteSenderId()
+[RPC]
 	async void AddCharacterToDb(int networkId, string token, string name)
 	{
-		if (GetTree().GetNetworkUniqueId() != 1)
+		if (GetTree().GetUniqueId() != 1)
 		{
 			return;
 		}
@@ -129,7 +130,7 @@ public partial class AuthController : Node
 		RpcId(networkId, nameof(ToggleLoading));
 	}
 
-	[Puppet]
+	[RPC]
 	void ToggleLoading()
 	{
 		PopupController.HideLoading();

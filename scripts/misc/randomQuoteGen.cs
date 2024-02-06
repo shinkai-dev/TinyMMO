@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public class randomQuoteGen : Label
+public partial class randomQuoteGen : Label
 {
     private string[] prefixes = {
     "The great",

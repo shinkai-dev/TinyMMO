@@ -1,7 +1,7 @@
 using Godot;
 using System.Collections.Generic;
 
-public class GameController : Node
+public partial class GameController : Node
 {
 	private Dictionary<int, Player> PlayersPerSession = new Dictionary<int, Player>();
 	private readonly Dictionary<string, Player> PlayersPerUid = new Dictionary<string, Player>();
@@ -11,11 +11,11 @@ public class GameController : Node
 	{
 		PopupController = GetNode<PopupController>("/root/PopupController");
 
-		GetTree().Connect("connected_to_server", this, nameof(ConnectedToServer));
-		GetTree().Connect("network_peer_connected", this, nameof(PlayerConnected));
-		GetTree().Connect("network_peer_disconnected", this, nameof(PlayerDisconnected));
-		GetTree().Connect("connection_failed", this, nameof(ServerDisconnected));
-		GetTree().Connect("server_disconnected", this, nameof(ServerDisconnected));
+		GetTree().Connect("connected_to_server", new Callable(this, nameof(ConnectedToServer)));
+		GetTree().Connect("network_peer_connected", new Callable(this, nameof(PlayerConnected)));
+		GetTree().Connect("network_peer_disconnected", new Callable(this, nameof(PlayerDisconnected)));
+		GetTree().Connect("connection_failed", new Callable(this, nameof(ServerDisconnected)));
+		GetTree().Connect("server_disconnected", new Callable(this, nameof(ServerDisconnected)));
 	}
 
 	void PlayerConnected(int id)
@@ -47,7 +47,7 @@ public class GameController : Node
 	void ConnectedToServer()
 	{
 		GD.Print("Connected to server");
-		var id = GetTree().GetNetworkUniqueId();
+		var id = GetTree().GetUniqueId();
 		if (id != 1)
 		{
 			AddPlayer(id);
@@ -63,7 +63,7 @@ public class GameController : Node
 	void ServerDisconnected()
 	{
 		GD.Print("Server disconnected");
-		GetTree().ChangeScene("res://scenes/MainMenu.tscn");
+		GetTree().ChangeSceneToFile("res://scenes/MainMenu.tscn");
 	}
 
 	Player AddPlayer(int id)
@@ -73,17 +73,18 @@ public class GameController : Node
 		var playerInstance = (Player)newPlayer.Instance();
 		var spawnPoint = GetNode<Node2D>("World/Spawnpoint").GlobalPosition;
 		playerInstance.Name = id + "";
-		playerInstance.SetNetworkMaster(id);
+		playerInstance.SetMultiplayerAuthority(id);
 		playerInstance.GlobalPosition = spawnPoint;
 		PlayersPerSession[id] = playerInstance;
 		AddChild(playerInstance);
 		return playerInstance;
 	}
 
-	[Master]
+	The master and mastersync rpc behavior is not officially supported anymore. Try using another keyword or making custom logic using Multiplayer.GetRemoteSenderId()
+[RPC]
 	public async void CreateUser(string authToken, string name)
 	{
-		if (GetTree().GetNetworkUniqueId() != 1)
+		if (GetTree().GetUniqueId() != 1)
 		{
 			return;
 		}
@@ -100,7 +101,7 @@ public class GameController : Node
 		userCollection.SetDoc(new UserModel() { Id = uid + "", Name = name });
 	}
 
-	[Puppet]
+	[RPC]
 	async void SendToCharacterCreate()
 	{
 		var CharacterCreationMenu = (PackedScene)ResourceLoader.Load("res://scenes/menu/CreateCharacter.tscn");
@@ -110,21 +111,22 @@ public class GameController : Node
 		CharacterCreationMenuInstance.PopupCentered();
 		CharacterCreationMenuInstance.Raise();
 		await ToSignal(menu, nameof(CreateCharMenu.Done));
-		var id = GetTree().GetNetworkUniqueId();
+		var id = GetTree().GetUniqueId();
 		RpcId(1, nameof(GetUserByToken), id, GetNode<AuthController>("/root/AuthController").GetToken());
 	}
 
-	[Puppet]
+	[RPC]
 	async void AlreadyConnected()
 	{
-		GetTree().ChangeScene("res://scenes/menu/menuPrin.tscn");
+		GetTree().ChangeSceneToFile("res://scenes/menu/menuPrin.tscn");
 		await PopupController.ShowMessage("Error", "You are already connected");
 	}
 
-	[Master]
+	The master and mastersync rpc behavior is not officially supported anymore. Try using another keyword or making custom logic using Multiplayer.GetRemoteSenderId()
+[RPC]
 	public async void GetUserByToken(int id, string token)
 	{
-		if (GetTree().GetNetworkUniqueId() != 1)
+		if (GetTree().GetUniqueId() != 1)
 		{
 			return;
 		}

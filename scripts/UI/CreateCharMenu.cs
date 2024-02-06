@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public class CreateCharMenu : Node
+public partial class CreateCharMenu : Node
 {
 	private PopupController PopupController;
 	private LineEdit PlayerName;
@@ -16,7 +16,7 @@ public class CreateCharMenu : Node
 		Create = GetNode<Button>("Create");
 		AuthController = GetNode<AuthController>("/root/AuthController");
 
-		Create.Connect("pressed", this, nameof(OnCreatePressed));
+		Create.Connect("pressed", new Callable(this, nameof(OnCreatePressed)));
 	}
 
 	async void OnCreatePressed()

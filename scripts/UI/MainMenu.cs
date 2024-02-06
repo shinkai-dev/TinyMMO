@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public class MainMenu : Node
+public partial class MainMenu : Node
 {
 	private Button PlayButton;
 	private Button HostButton;
@@ -19,9 +19,9 @@ public class MainMenu : Node
 		Password = GetNode<LineEdit>("Password");
 		PopupController = GetNode<PopupController>("/root/PopupController");
 
-		PlayButton.Connect("pressed", this, nameof(OnPlayPressed));
-		HostButton.Connect("pressed", this, nameof(OnHostPressed));
-		RegisterButton.Connect("pressed", this, nameof(OnRegisterPressed));
+		PlayButton.Connect("pressed", new Callable(this, nameof(OnPlayPressed)));
+		HostButton.Connect("pressed", new Callable(this, nameof(OnHostPressed)));
+		RegisterButton.Connect("pressed", new Callable(this, nameof(OnRegisterPressed)));
 	}
 
 	async void OnPlayPressed()
@@ -37,7 +37,7 @@ public class MainMenu : Node
 
 	void OnHostPressed()
 	{
-		var peer = new NetworkedMultiplayerENet();
+		var peer = new ENetMultiplayerPeer();
 		var error = peer.CreateServer(NetworkConsts.PORT, NetworkConsts.MAX_PLAYERS);
 		if (error != Error.Ok)
 		{
@@ -50,12 +50,12 @@ public class MainMenu : Node
 
 	void OnRegisterPressed()
 	{
-		GetTree().ChangeScene("res://scenes/menu/Register.tscn");
+		GetTree().ChangeSceneToFile("res://scenes/menu/Register.tscn");
 	}
 
 	void OpenGame()
 	{
-		GetTree().ChangeScene("res://scenes/GameController.tscn");
+		GetTree().ChangeSceneToFile("res://scenes/GameController.tscn");
 	}
 
 	void ToggleForm(bool enabled)

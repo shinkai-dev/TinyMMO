@@ -1,14 +1,14 @@
 [gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://scripts/UI/MainMenu.cs" type="Script" id=1]
-[ext_resource path="res://assets/fonts/Pixelcastle-Regular.otf" type="DynamicFontData" id=2]
+[ext_resource path="res://assets/fonts/Pixelcastle-Regular.otf" type="FontFile" id=2]
 [ext_resource path="res://assets/sound/music/menu.mp3" type="AudioStream" id=3]
-[ext_resource path="res://assets/backgrounds/tinyMMOBackground.jpg" type="Texture" id=4]
+[ext_resource path="res://assets/backgrounds/tinyMMOBackground.jpg" type="Texture2D" id=4]
 [ext_resource path="res://scripts/misc/randomQuoteGen.cs" type="Script" id=5]
-[ext_resource path="res://themes/fonts/dogicapixel.tres" type="DynamicFont" id=6]
+[ext_resource path="res://themes/fonts/dogicapixel.tres" type="FontFile" id=6]
 [ext_resource path="res://themes/UI.tres" type="Theme" id=7]
 
-[sub_resource type="DynamicFont" id=1]
+[sub_resource type="FontFile" id=1]
 size = 128
 outline_size = 2
 outline_color = Color( 1, 0.560784, 0, 0.509804 )
@@ -20,61 +20,61 @@ font_data = ExtResource( 2 )
 [node name="Menu Principal" type="Node2D"]
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
-margin_right = 311.0
-margin_bottom = 600.0
+offset_right = 311.0
+offset_bottom = 600.0
 
 [node name="GridContainer" type="GridContainer" parent="CenterContainer"]
-margin_left = 55.0
-margin_top = 246.0
-margin_right = 255.0
-margin_bottom = 354.0
-rect_pivot_offset = Vector2( -51, -202 )
+offset_left = 55.0
+offset_top = 246.0
+offset_right = 255.0
+offset_bottom = 354.0
+pivot_offset = Vector2( -51, -202 )
 script = ExtResource( 1 )
 
 [node name="Email" type="LineEdit" parent="CenterContainer/GridContainer"]
-margin_right = 200.0
-margin_bottom = 22.0
-rect_min_size = Vector2( 200, 0 )
+offset_right = 200.0
+offset_bottom = 22.0
+custom_minimum_size = Vector2( 200, 0 )
 theme = ExtResource( 7 )
 placeholder_text = "Email"
 
 [node name="Password" type="LineEdit" parent="CenterContainer/GridContainer"]
-margin_top = 26.0
-margin_right = 200.0
-margin_bottom = 48.0
+offset_top = 26.0
+offset_right = 200.0
+offset_bottom = 48.0
 theme = ExtResource( 7 )
 secret = true
 placeholder_text = "Password"
 
 [node name="Play" type="Button" parent="CenterContainer/GridContainer"]
-margin_top = 52.0
-margin_right = 200.0
-margin_bottom = 68.0
-rect_pivot_offset = Vector2( 91, 106 )
+offset_top = 52.0
+offset_right = 200.0
+offset_bottom = 68.0
+pivot_offset = Vector2( 91, 106 )
 theme = ExtResource( 7 )
 text = "Play"
 
 [node name="Host" type="Button" parent="CenterContainer/GridContainer"]
-margin_top = 72.0
-margin_right = 200.0
-margin_bottom = 88.0
-rect_pivot_offset = Vector2( 91, 106 )
+offset_top = 72.0
+offset_right = 200.0
+offset_bottom = 88.0
+pivot_offset = Vector2( 91, 106 )
 theme = ExtResource( 7 )
 text = "Host"
 
 [node name="Register" type="Button" parent="CenterContainer/GridContainer"]
-margin_top = 92.0
-margin_right = 200.0
-margin_bottom = 108.0
+offset_top = 92.0
+offset_right = 200.0
+offset_bottom = 108.0
 theme = ExtResource( 7 )
 text = "Register"
 
 [node name="Label" type="Label" parent="."]
-margin_left = 182.0
-margin_top = 39.0
-margin_right = 870.0
-margin_bottom = 168.0
-custom_fonts/font = SubResource( 1 )
+offset_left = 182.0
+offset_top = 39.0
+offset_right = 870.0
+offset_bottom = 168.0
+theme_override_fonts/font = SubResource( 1 )
 text = "TinyMMO"
 align = 1
 
@@ -99,7 +99,7 @@ stream = ExtResource( 3 )
 volume_db = -20.0
 autoplay = true
 
-[node name="TinyMmoBackground" type="Sprite" parent="."]
+[node name="TinyMmoBackground" type="Sprite2D" parent="."]
 modulate = Color( 0.792157, 0.792157, 0.792157, 1 )
 position = Vector2( 511, 302 )
 scale = Vector2( 0.5, 0.46 )
@@ -107,14 +107,14 @@ z_index = -1
 texture = ExtResource( 4 )
 
 [node name="Label2" type="Label" parent="."]
-margin_left = 9.0
-margin_top = 542.0
-margin_right = 952.0
-margin_bottom = 594.0
-rect_scale = Vector2( 1.00079, 1.01166 )
-rect_pivot_offset = Vector2( -408, -255 )
-custom_colors/font_color = Color( 1, 0.901961, 0.0980392, 1 )
-custom_fonts/font = ExtResource( 6 )
+offset_left = 9.0
+offset_top = 542.0
+offset_right = 952.0
+offset_bottom = 594.0
+scale = Vector2( 1.00079, 1.01166 )
+pivot_offset = Vector2( -408, -255 )
+theme_override_colors/font_color = Color( 1, 0.901961, 0.0980392, 1 )
+theme_override_fonts/font = ExtResource( 6 )
 text = "The Sage Wizard says:
 \"Beware, noble travelers, for in this digital realm
 thy password is thy sacred key to the dungeon's secrets.\""

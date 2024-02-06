@@ -2,7 +2,7 @@ using Godot;
 using System;
 using System.Threading.Tasks;
 
-public class PopupController : Node
+public partial class PopupController : Node
 {
     private AcceptDialog GamePopup;
     private Control Loading;

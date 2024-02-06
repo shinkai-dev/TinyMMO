@@ -1,4 +1,4 @@
-public class UserCollection : DbController<UserModel>
+public partial class UserCollection : DbController<UserModel>
 {
     public UserCollection(): base("users") { }
 }

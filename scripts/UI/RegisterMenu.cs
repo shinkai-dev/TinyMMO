@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public class RegisterMenu : Node
+public partial class RegisterMenu : Node
 {
 	private Button RegisterButton;
 	private Button ReturnButton;
@@ -18,8 +18,8 @@ public class RegisterMenu : Node
 		PopupController = GetNode<PopupController>("/root/PopupController");
 		Email = GetNode<LineEdit>("Email");
 		Password = GetNode<LineEdit>("Password");
-		RegisterButton.Connect("pressed", this, nameof(OnRegisterPressed));
-		ReturnButton.Connect("pressed", this, nameof(onReturnPressed));
+		RegisterButton.Connect("pressed", new Callable(this, nameof(OnRegisterPressed)));
+		ReturnButton.Connect("pressed", new Callable(this, nameof(onReturnPressed)));
 	}
 
 	async void OnRegisterPressed()
@@ -41,6 +41,6 @@ public class RegisterMenu : Node
 
 	void onReturnPressed()
 	{
-		GetTree().ChangeScene("res://scenes/menu/menuPrin.tscn");
+		GetTree().ChangeSceneToFile("res://scenes/menu/menuPrin.tscn");
 	}
 }

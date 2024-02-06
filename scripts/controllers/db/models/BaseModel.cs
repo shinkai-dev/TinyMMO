@@ -1,6 +1,6 @@
 using MongoDB.Bson.Serialization.Attributes;
 
-public class BaseModel
+public partial class BaseModel
 {
     [BsonElement("id")]
     public string Id;

@@ -3,23 +3,23 @@
 using Godot;
 using System;
 
-public class Player : KinematicBody2D
+public partial class Player : CharacterBody2D
 {
 	[Export] private int MoveSpeed = 80;
 	[Export] private float sprintMultiplier = 1.6f;
-	[Puppet] private Vector2 PuppetVelocity = new Vector2();
-	[Puppet] private Vector2 PuppetPosition = new Vector2();
+	[RPC] private Vector2 PuppetVelocity = new Vector2();
+	[RPC] private Vector2 PuppetPosition = new Vector2();
 	public Vector2 Velocity = new Vector2();
 	private Color PlayaColor_ = new Color(1, 1, 1);
-	[Remote]
+	[RPC(MultiplayerAPI.RPCMode.AnyPeer)]
 	public Godot.Color PlayaColor
 	{
 		set
 		{
 			GD.Print(value);
 			PlayaEyeColor = new Color(1 - value.r, 1 - value.g, 1 - value.b);
-			var playaEyes = GetNode<Sprite>("Playa/Playa-eyes");
-			var sprite = GetNode<Sprite>("Playa");
+			var playaEyes = GetNode<Sprite2D>("Playa/Playa-eyes");
+			var sprite = GetNode<Sprite2D>("Playa");
 			var playerName = GetNode<Label>("PlayerName");
 			sprite.Modulate = value;
 			sprite.SelfModulate = value;
@@ -36,7 +36,7 @@ public class Player : KinematicBody2D
 		set
 		{
 			PlayaEyeColor_ = value;
-			var playaEyes = GetNode<Sprite>("Playa/Playa-eyes");
+			var playaEyes = GetNode<Sprite2D>("Playa/Playa-eyes");
 			playaEyes.Modulate = value;
 			playaEyes.SelfModulate = value;
 		}
@@ -45,20 +45,20 @@ public class Player : KinematicBody2D
 	public Timer stepDelay;
 	public float prevStepDelay;
 	public AudioStreamPlayer2D stepSound;
-	[Remote] private string Uid_;
+	[RPC(MultiplayerAPI.RPCMode.AnyPeer)] private string Uid_;
 	public string Uid
 	{
 		get { return Uid_; }
 	}
 	private string Nickname_ = "";
-	[Remote]
+	[RPC(MultiplayerAPI.RPCMode.AnyPeer)]
 	public string Nickname
 	{
 		set { GetNode<Label>("PlayerName").Text = value; Nickname_ = value; GD.Print(value); }
 		get { return Nickname_; }
 	}
 	private bool Active_ = false;
-	[Remote]
+	[RPC(MultiplayerAPI.RPCMode.AnyPeer)]
 	public bool Active
 	{
 		set { Active_ = value; Visible = value; }
@@ -72,11 +72,11 @@ public class Player : KinematicBody2D
 		stepSound = GetNode<AudioStreamPlayer2D>("stepSound");
 		stepDelay = GetNode<Timer>("stepDelay");
 		prevStepDelay = stepDelay.WaitTime;
-		Connect("mouse_entered", this, nameof(_on_Player_mouse_entered));
-		Connect("mouse_exited", this, nameof(_on_Player_mouse_exited));
+		Connect("mouse_entered", new Callable(this, nameof(_on_Player_mouse_entered)));
+		Connect("mouse_exited", new Callable(this, nameof(_on_Player_mouse_exited)));
 	}
 
-	[Remote]
+	[RPC(MultiplayerAPI.RPCMode.AnyPeer)]
 	public void MakeStepSound()
 	{
 		stepSound.Play();
@@ -120,7 +120,7 @@ public class Player : KinematicBody2D
 		if (stepDelay.TimeLeft == 0 && Velocity != Vector2.Zero)
 		{
 			Rpc(nameof(MakeStepSound));
-			stepSound.PitchScale = (float)GD.RandRange(0.8f, 1.2f);
+			stepSound.PitchScale = (float)GD.RandfRange(0.8f, 1.2f);
 			if (Input.IsActionPressed("sprint"))
 			{
 				stepDelay.Start(prevStepDelay / sprintMultiplier);
@@ -141,7 +141,7 @@ public class Player : KinematicBody2D
 			return;
 		}
 
-		if (IsNetworkMaster())
+		if (IsMultiplayerAuthority())
 		{
 			GetInput(delta);
 		}
@@ -151,8 +151,8 @@ public class Player : KinematicBody2D
 			Velocity = PuppetVelocity;
 		}
 
-		var playa = GetNode<Sprite>("Playa");
-		var playaEyes = GetNode<Sprite>("Playa/Playa-eyes");
+		var playa = GetNode<Sprite2D>("Playa");
+		var playaEyes = GetNode<Sprite2D>("Playa/Playa-eyes");
 		playa.FlipH = Velocity.x < 0;
 		playaEyes.FlipH = Velocity.x < 0;
 
@@ -161,7 +161,7 @@ public class Player : KinematicBody2D
 
 	public void SetData(string uid, string name, Color color, bool active)
 	{
-		if (GetTree().GetNetworkUniqueId() != 1)
+		if (GetTree().GetUniqueId() != 1)
 		{
 			return;
 		}
@@ -178,7 +178,7 @@ public class Player : KinematicBody2D
 
 	public void UpdateData(int sessionId, string uid, string name, Color color, bool active)
 	{
-		if (GetTree().GetNetworkUniqueId() != 1)
+		if (GetTree().GetUniqueId() != 1)
 		{
 			return;
 		}

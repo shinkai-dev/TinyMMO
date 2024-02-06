@@ -8,11 +8,11 @@ public class ServerNetwork : Node
 {
 	[Export] private int port = Consts.port;
 	[Export] private int players = 5;
-	private NetworkedMultiplayerENet peer = null;
+	private ENetMultiplayerPeer peer = null;
 
 	public override void _Ready()
 	{
-		peer = new NetworkedMultiplayerENet();
+		peer = new ENetMultiplayerPeer();
 		peer.CreateServer(port, players);
 		GetTree().NetworkPeer = peer;
 	}
