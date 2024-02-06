@@ -21,3 +21,5 @@ mono_crash.*.json
 .mono/temp/obj/TinyMMO.csproj.nuget.dgspec.json
 .mono/temp/obj/TinyMMO.csproj.nuget.g.props
 .mono/temp/obj/TinyMMO.csproj.nuget.g.targets
+
+/.idea/

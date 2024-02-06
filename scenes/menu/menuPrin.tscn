@@ -1,21 +1,21 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=8 format=3 uid="uid://kgrj4v65kb2m"]
 
-[ext_resource path="res://scripts/UI/MainMenu.cs" type="Script" id=1]
-[ext_resource path="res://assets/fonts/Pixelcastle-Regular.otf" type="FontFile" id=2]
-[ext_resource path="res://assets/sound/music/menu.mp3" type="AudioStream" id=3]
-[ext_resource path="res://assets/backgrounds/tinyMMOBackground.jpg" type="Texture2D" id=4]
-[ext_resource path="res://scripts/misc/randomQuoteGen.cs" type="Script" id=5]
-[ext_resource path="res://themes/fonts/dogicapixel.tres" type="FontFile" id=6]
-[ext_resource path="res://themes/UI.tres" type="Theme" id=7]
+[ext_resource type="FontFile" uid="uid://dy7fw5q7icxri" path="res://assets/fonts/Pixelcastle-Regular.otf" id="2"]
+[ext_resource type="AudioStream" uid="uid://bjxsawed84epa" path="res://assets/sound/music/menu.mp3" id="3"]
+[ext_resource type="Texture2D" uid="uid://brcmhu0kren1o" path="res://assets/backgrounds/tinyMMOBackground.jpg" id="4"]
+[ext_resource type="FontFile" path="res://themes/fonts/dogicapixel.tres" id="6"]
+[ext_resource type="Theme" uid="uid://cjrjtqp4xjm74" path="res://themes/UI.tres" id="7"]
 
-[sub_resource type="FontFile" id=1]
-size = 128
-outline_size = 2
-outline_color = Color( 1, 0.560784, 0, 0.509804 )
-extra_spacing_char = 8
-font_data = ExtResource( 2 )
+[sub_resource type="FontFile" id="1"]
+fallbacks = Array[Font]([ExtResource("2")])
+cache/0/16/0/ascent = 0.0
+cache/0/16/0/descent = 0.0
+cache/0/16/0/underline_position = 0.0
+cache/0/16/0/underline_thickness = 0.0
+cache/0/16/0/scale = 1.0
+cache/0/16/0/kerning_overrides/16/0 = Vector2(0, 0)
 
-[sub_resource type="Gradient" id=2]
+[sub_resource type="Gradient" id="2"]
 
 [node name="Menu Principal" type="Node2D"]
 
@@ -24,49 +24,33 @@ offset_right = 311.0
 offset_bottom = 600.0
 
 [node name="GridContainer" type="GridContainer" parent="CenterContainer"]
-offset_left = 55.0
-offset_top = 246.0
-offset_right = 255.0
-offset_bottom = 354.0
-pivot_offset = Vector2( -51, -202 )
-script = ExtResource( 1 )
+layout_mode = 2
 
 [node name="Email" type="LineEdit" parent="CenterContainer/GridContainer"]
-offset_right = 200.0
-offset_bottom = 22.0
-custom_minimum_size = Vector2( 200, 0 )
-theme = ExtResource( 7 )
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+theme = ExtResource("7")
 placeholder_text = "Email"
 
 [node name="Password" type="LineEdit" parent="CenterContainer/GridContainer"]
-offset_top = 26.0
-offset_right = 200.0
-offset_bottom = 48.0
-theme = ExtResource( 7 )
-secret = true
+layout_mode = 2
+theme = ExtResource("7")
 placeholder_text = "Password"
+secret = true
 
 [node name="Play" type="Button" parent="CenterContainer/GridContainer"]
-offset_top = 52.0
-offset_right = 200.0
-offset_bottom = 68.0
-pivot_offset = Vector2( 91, 106 )
-theme = ExtResource( 7 )
+layout_mode = 2
+theme = ExtResource("7")
 text = "Play"
 
 [node name="Host" type="Button" parent="CenterContainer/GridContainer"]
-offset_top = 72.0
-offset_right = 200.0
-offset_bottom = 88.0
-pivot_offset = Vector2( 91, 106 )
-theme = ExtResource( 7 )
+layout_mode = 2
+theme = ExtResource("7")
 text = "Host"
 
 [node name="Register" type="Button" parent="CenterContainer/GridContainer"]
-offset_top = 92.0
-offset_right = 200.0
-offset_bottom = 108.0
-theme = ExtResource( 7 )
+layout_mode = 2
+theme = ExtResource("7")
 text = "Register"
 
 [node name="Label" type="Label" parent="."]
@@ -74,50 +58,43 @@ offset_left = 182.0
 offset_top = 39.0
 offset_right = 870.0
 offset_bottom = 168.0
-theme_override_fonts/font = SubResource( 1 )
+theme_override_fonts/font = SubResource("1")
 text = "TinyMMO"
-align = 1
 
 [node name="CPUParticles2D" type="CPUParticles2D" parent="Label"]
 show_behind_parent = true
-position = Vector2( 338, 66 )
+position = Vector2(338, 66)
 amount = 100
 lifetime = 2.0
 emission_shape = 2
-emission_rect_extents = Vector2( 350, 1 )
-direction = Vector2( 0, 1 )
-gravity = Vector2( 0, -45 )
-angle = 39.6
-angle_random = 1.0
-scale_amount = 3.5
-scale_amount_random = 1.0
-color = Color( 0.87451, 0.466667, 0.0313726, 1 )
-color_ramp = SubResource( 2 )
+emission_sphere_radius = 1.0
+direction = Vector2(0, 1)
+gravity = Vector2(0, -45)
+color = Color(0.87451, 0.466667, 0.0313726, 1)
+color_ramp = SubResource("2")
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
-stream = ExtResource( 3 )
+stream = ExtResource("3")
 volume_db = -20.0
 autoplay = true
 
 [node name="TinyMmoBackground" type="Sprite2D" parent="."]
-modulate = Color( 0.792157, 0.792157, 0.792157, 1 )
-position = Vector2( 511, 302 )
-scale = Vector2( 0.5, 0.46 )
+modulate = Color(0.792157, 0.792157, 0.792157, 1)
 z_index = -1
-texture = ExtResource( 4 )
+position = Vector2(511, 302)
+scale = Vector2(0.5, 0.46)
+texture = ExtResource("4")
 
 [node name="Label2" type="Label" parent="."]
 offset_left = 9.0
 offset_top = 542.0
 offset_right = 952.0
 offset_bottom = 594.0
-scale = Vector2( 1.00079, 1.01166 )
-pivot_offset = Vector2( -408, -255 )
-theme_override_colors/font_color = Color( 1, 0.901961, 0.0980392, 1 )
-theme_override_fonts/font = ExtResource( 6 )
+scale = Vector2(1.00079, 1.01166)
+pivot_offset = Vector2(-408, -255)
+theme_override_colors/font_color = Color(1, 0.901961, 0.0980392, 1)
+theme_override_fonts/font = ExtResource("6")
 text = "The Sage Wizard says:
 \"Beware, noble travelers, for in this digital realm
 thy password is thy sacred key to the dungeon's secrets.\""
-autowrap = true
 uppercase = true
-script = ExtResource( 5 )
