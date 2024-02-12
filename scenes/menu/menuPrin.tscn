@@ -1,5 +1,6 @@
-[gd_scene load_steps=8 format=3 uid="uid://kgrj4v65kb2m"]
+[gd_scene load_steps=9 format=3 uid="uid://kgrj4v65kb2m"]
 
+[ext_resource type="Script" path="res://scripts/UI/MainMenu.cs" id="1_lhfmp"]
 [ext_resource type="FontFile" uid="uid://dy7fw5q7icxri" path="res://assets/fonts/Pixelcastle-Regular.otf" id="2"]
 [ext_resource type="AudioStream" uid="uid://bjxsawed84epa" path="res://assets/sound/music/menu.mp3" id="3"]
 [ext_resource type="Texture2D" uid="uid://brcmhu0kren1o" path="res://assets/backgrounds/tinyMMOBackground.jpg" id="4"]
@@ -25,6 +26,7 @@ offset_bottom = 600.0
 
 [node name="GridContainer" type="GridContainer" parent="CenterContainer"]
 layout_mode = 2
+script = ExtResource("1_lhfmp")
 
 [node name="Email" type="LineEdit" parent="CenterContainer/GridContainer"]
 custom_minimum_size = Vector2(200, 0)

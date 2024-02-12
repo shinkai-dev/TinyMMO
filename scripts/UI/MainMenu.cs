@@ -44,7 +44,7 @@ public partial class MainMenu : Node
 			_ = PopupController.ShowMessage("Error", "Could not create server. Verify that the port is not in use.");
 			return;
 		}
-		GetTree().NetworkPeer = peer;
+		Multiplayer.MultiplayerPeer = peer;
 		OpenGame();
 	}
 

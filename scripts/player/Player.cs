@@ -7,17 +7,15 @@ public partial class Player : CharacterBody2D
 {
 	[Export] private int MoveSpeed = 80;
 	[Export] private float sprintMultiplier = 1.6f;
-	[RPC] private Vector2 PuppetVelocity = new Vector2();
-	[RPC] private Vector2 PuppetPosition = new Vector2();
-	public Vector2 Velocity = new Vector2();
+	private Vector2 PuppetVelocity = new Vector2();
+	private Vector2 PuppetPosition = new Vector2();
 	private Color PlayaColor_ = new Color(1, 1, 1);
-	[RPC(MultiplayerAPI.RPCMode.AnyPeer)]
 	public Godot.Color PlayaColor
 	{
 		set
 		{
 			GD.Print(value);
-			PlayaEyeColor = new Color(1 - value.r, 1 - value.g, 1 - value.b);
+			PlayaEyeColor = new Color(1 - value.R, 1 - value.G, 1 - value.B);
 			var playaEyes = GetNode<Sprite2D>("Playa/Playa-eyes");
 			var sprite = GetNode<Sprite2D>("Playa");
 			var playerName = GetNode<Label>("PlayerName");
@@ -43,22 +41,20 @@ public partial class Player : CharacterBody2D
 		get { return PlayaEyeColor_; }
 	}
 	public Timer stepDelay;
-	public float prevStepDelay;
+	public double prevStepDelay;
 	public AudioStreamPlayer2D stepSound;
-	[RPC(MultiplayerAPI.RPCMode.AnyPeer)] private string Uid_;
+	private string Uid_;
 	public string Uid
 	{
 		get { return Uid_; }
 	}
 	private string Nickname_ = "";
-	[RPC(MultiplayerAPI.RPCMode.AnyPeer)]
 	public string Nickname
 	{
 		set { GetNode<Label>("PlayerName").Text = value; Nickname_ = value; GD.Print(value); }
 		get { return Nickname_; }
 	}
 	private bool Active_ = false;
-	[RPC(MultiplayerAPI.RPCMode.AnyPeer)]
 	public bool Active
 	{
 		set { Active_ = value; Visible = value; }
@@ -76,7 +72,7 @@ public partial class Player : CharacterBody2D
 		Connect("mouse_exited", new Callable(this, nameof(_on_Player_mouse_exited)));
 	}
 
-	[RPC(MultiplayerAPI.RPCMode.AnyPeer)]
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer)]
 	public void MakeStepSound()
 	{
 		stepSound.Play();
@@ -95,24 +91,23 @@ public partial class Player : CharacterBody2D
 		playerName.Visible = false;
 		GD.Print("Mouse exited");
 	}
-	public void GetInput(float delta)
+	public void GetInput(double delta)
 	{
 		if (!Active) {
 			return;
 		}
 
-		Velocity = new Vector2();
 		if (Input.IsActionPressed("ui_right"))
-			Velocity.x += 1;
+			Velocity += new Vector2(1, 0);
 
 		if (Input.IsActionPressed("ui_left"))
-			Velocity.x -= 1;
+			Velocity += new Vector2(-1, 0);
 
 		if (Input.IsActionPressed("ui_down"))
-			Velocity.y += 1;
+			Velocity += new Vector2(0, 1);
 
 		if (Input.IsActionPressed("ui_up"))
-			Velocity.y -= 1;
+			Velocity += new Vector2(0, -1);
 		if (Input.IsActionPressed("sprint"))
 		{
 			Velocity *= sprintMultiplier;
@@ -120,7 +115,7 @@ public partial class Player : CharacterBody2D
 		if (stepDelay.TimeLeft == 0 && Velocity != Vector2.Zero)
 		{
 			Rpc(nameof(MakeStepSound));
-			stepSound.PitchScale = (float)GD.RandfRange(0.8f, 1.2f);
+			stepSound.PitchScale = (float)GD.RandRange(0.8f, 1.2f);
 			if (Input.IsActionPressed("sprint"))
 			{
 				stepDelay.Start(prevStepDelay / sprintMultiplier);
@@ -131,11 +126,9 @@ public partial class Player : CharacterBody2D
 			}
 		}
 		Velocity *= MoveSpeed;
-		Rset(nameof(PuppetVelocity), Velocity);
-		Rset(nameof(PuppetPosition), Position);
 	}
 
-	public override void _PhysicsProcess(float delta)
+	public override void _PhysicsProcess(double delta)
 	{
 		if (!Active) {
 			return;
@@ -153,40 +146,31 @@ public partial class Player : CharacterBody2D
 
 		var playa = GetNode<Sprite2D>("Playa");
 		var playaEyes = GetNode<Sprite2D>("Playa/Playa-eyes");
-		playa.FlipH = Velocity.x < 0;
-		playaEyes.FlipH = Velocity.x < 0;
+		playa.FlipH = Velocity.X < 0;
+		playaEyes.FlipH = Velocity.Y < 0;
 
-		MoveAndSlide(Velocity);
+		MoveAndSlide();
 	}
 
 	public void SetData(string uid, string name, Color color, bool active)
 	{
-		if (GetTree().GetUniqueId() != 1)
+		if (Multiplayer.GetUniqueId() != 1)
 		{
 			return;
 		}
 
-		Rset(nameof(Uid_), uid);
-		Rset(nameof(Nickname), name);
-		Rset(nameof(PlayaColor), new Color(color.r, color.g, color.b));
-		Rset(nameof(Active), active);
 		Uid_ = uid;
 		Nickname = name;
-		PlayaColor = new Color(color.r, color.g, color.b);
+		PlayaColor = new Color(color.R, color.G, color.B);
 		Active = active;
 	}
 
 	public void UpdateData(int sessionId, string uid, string name, Color color, bool active)
 	{
-		if (GetTree().GetUniqueId() != 1)
+		if (Multiplayer.GetUniqueId() != 1)
 		{
 			return;
 		}
-
-		RsetId(sessionId, nameof(Uid_), uid);
-		RsetId(sessionId, nameof(Nickname), name);
-		RsetId(sessionId, nameof(PlayaColor), new Color(color.r, color.g, color.b));
-		RsetId(sessionId, nameof(Active), active);
 	}
 }
 

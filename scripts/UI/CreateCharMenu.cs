@@ -7,7 +7,7 @@ public partial class CreateCharMenu : Node
 	private LineEdit PlayerName;
 	private Button Create;
 	private AuthController AuthController;
-	[Signal] public delegate bool Done();
+	[Signal] public delegate bool DoneEventHandler();
 
 	public override void _Ready()
 	{

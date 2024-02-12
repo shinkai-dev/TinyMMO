@@ -5,39 +5,39 @@ public partial class PlayerCam : Camera2D
 {
 	[Export] public float ServerCamSpeed = 32f;
 
-	public override void _Process(float delta)
+	public override void _Process(double delta)
 	{
-		if (GetTree().GetUniqueId() == 1) {
+		if (Multiplayer.GetUniqueId() == 1) {
 			UpdateServerCam(delta);
 		} else {
 			UpdatePlayerCam();
 		}
 	}
 
-	void UpdateServerCam(float delta) {
+	void UpdateServerCam(double delta) {
 		var Velocity = new Vector2();
 
 		if (Input.IsActionPressed("ui_right"))
-			Velocity.x += 1;
+			Velocity.X += 1;
 
 		if (Input.IsActionPressed("ui_left"))
-			Velocity.x -= 1;
+			Velocity.X -= 1;
 
 		if (Input.IsActionPressed("ui_down"))
-			Velocity.y += 1;
+			Velocity.Y += 1;
 
 		if (Input.IsActionPressed("ui_up"))
-			Velocity.y -= 1;
+			Velocity.Y -= 1;
 		
-		Velocity *= delta * ServerCamSpeed;
+		Velocity = Velocity * (float)delta * ServerCamSpeed;
 
 		GlobalPosition += Velocity;
 	}
 
 	void UpdatePlayerCam() {
 		try {
-		 	var PlayerPos = GetNode<Player>("../" + GetTree().GetUniqueId()).GlobalTransform;
-			GlobalPosition = PlayerPos.origin;
+		 	var PlayerPos = GetNode<Player>("../" + Multiplayer.GetUniqueId()).GlobalTransform;
+			GlobalPosition = PlayerPos.Origin;
 		} catch {
 			// Do nothing
 		}

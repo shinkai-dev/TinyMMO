@@ -40,7 +40,9 @@ public partial class AuthController : Node
 		else
 		{
 			var rawError = ((Dictionary)response.Body["error"])["message"].ToString();
-			var error = ErrorMessageConsts.dictionary.ContainsKey(rawError) ? ErrorMessageConsts.dictionary[rawError] : rawError;
+			var error = ErrorMessageConsts.dictionary.ContainsKey(rawError)
+				? ErrorMessageConsts.dictionary[rawError]
+				: rawError;
 			_ = PopupController.ShowMessage("Error", error);
 		}
 	}
@@ -64,7 +66,9 @@ public partial class AuthController : Node
 		else
 		{
 			var rawError = ((Dictionary)response.Body["error"])["message"].ToString();
-			var error = ErrorMessageConsts.dictionary.ContainsKey(rawError) ? ErrorMessageConsts.dictionary[rawError] : rawError;
+			var error = ErrorMessageConsts.dictionary.ContainsKey(rawError)
+				? ErrorMessageConsts.dictionary[rawError]
+				: rawError;
 			_ = PopupController.ShowMessage("Error", error);
 		}
 	}
@@ -73,31 +77,24 @@ public partial class AuthController : Node
 	{
 		var peer = new ENetMultiplayerPeer();
 		peer.CreateClient(NetworkConsts.IP, NetworkConsts.PORT);
-		GetTree().NetworkPeer = peer;
 		GetTree().ChangeSceneToFile("res://scenes/GameController.tscn");
 	}
 
 	public void CreateCharacter(string name)
 	{
-		RpcId(1, nameof(AddCharacterToDb), GetTree().GetUniqueId(), Token, name);
+		RpcId(1, nameof(AddCharacterToDb), Multiplayer.GetUniqueId(), Token, name);
 	}
 
-	[RPC]
+	[Rpc(MultiplayerApi.RpcMode.Authority)]
 	void ShowError(string error)
 	{
 		_ = PopupController.ShowMessage("Error", error);
 		PopupController.HideLoading();
 	}
 
-	The master and mastersync rpc behavior is not officially supported anymore. Try using another keyword or making custom logic using Multiplayer.GetRemoteSenderId()
-[RPC]
+	[Rpc(MultiplayerApi.RpcMode.Authority)]
 	async void AddCharacterToDb(int networkId, string token, string name)
 	{
-		if (GetTree().GetUniqueId() != 1)
-		{
-			return;
-		}
-
 		var playersWithName = UserCollection.QueryBy("name", name);
 		if (playersWithName.Length > 0)
 		{
@@ -113,7 +110,7 @@ public partial class AuthController : Node
 			};
 		var httpController = GetNode<HttpController>("/root/HttpController");
 		var response = await httpController.Post(EndpointConsts.TOKEN_CHECK, body);
-		var uid = response.Body["user_id"] as string;
+		var uid = (string)response.Body["user_id"];
 		UserCollection.SetDoc(
 			new UserModel()
 			{
@@ -130,7 +127,7 @@ public partial class AuthController : Node
 		RpcId(networkId, nameof(ToggleLoading));
 	}
 
-	[RPC]
+	[Rpc(MultiplayerApi.RpcMode.Authority)]
 	void ToggleLoading()
 	{
 		PopupController.HideLoading();
