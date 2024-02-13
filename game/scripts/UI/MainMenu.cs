@@ -37,14 +37,14 @@ public partial class MainMenu : Node
 
 	void OnHostPressed()
 	{
-		var peer = new ENetMultiplayerPeer();
-		var error = peer.CreateServer(NetworkConsts.PORT, NetworkConsts.MAX_PLAYERS);
-		if (error != Error.Ok)
-		{
-			_ = PopupController.ShowMessage("Error", "Could not create server. Verify that the port is not in use.");
-			return;
-		}
-		Multiplayer.MultiplayerPeer = peer;
+		// var peer = new ENetMultiplayerPeer();
+		// var error = peer.CreateServer(NetworkConsts.PORT, NetworkConsts.MAX_PLAYERS);
+		// if (error != Error.Ok)
+		// {
+		// 	_ = PopupController.ShowMessage("Error", "Could not create server. Verify that the port is not in use.");
+		// 	return;
+		// }
+		// Multiplayer.MultiplayerPeer = peer;
 		OpenGame();
 	}
 

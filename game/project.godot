@@ -106,3 +106,9 @@ environment/defaults/default_clear_color=Color(0, 0, 0, 1)
 quality/driver/driver_name="GLES2"
 vram_compression/import_etc=true
 quality/dynamic_fonts/use_oversampling=false
+
+[server]
+
+ip="127.0.0.1:9002"
+tick_rate=0.2
+client_id=""
